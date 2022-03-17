@@ -70,6 +70,14 @@ void Server::send_client(){
 			// std::cout << "+===================================================+" << std::endl;
 			send((*User)->getFd(), ReplyMessage.c_str(), ReplyMessage.length(), MSG_NOSIGNAL);
 		}
+		if ((*User)->need_disconected){
+			FD_CLR((*User)->getFd(), &_FdsSet);
+			// close((*User)->getFd());
+			delete (*User);
+			User = _Clients.erase(User);
+		}
+		if (User == _Clients.end())
+			break;
 	}
 }
 
@@ -120,22 +128,26 @@ void Server::query(Client *Client){
 	MYSQL_RES *result;
 	MYSQL_ROW row;
 	int state;
+	stringstream ss;
 
+	cout << Client->getIncomingBuffer().c_str();
 	state = mysql_query(Client->getDbFd(), Client->getIncomingBuffer().c_str());
 	if (state !=0)
 	{
-		std::cout << mysql_error(Client->getDbFd()) << std::endl;
+		ss << mysql_error(Client->getDbFd()) << "\n";
+		cout << ss.str();
+		Client->updateReplyMessage(ss.str());
 		return;
 	}
 
 	result = mysql_store_result(Client->getDbFd());
 
-	std::cout << "tables: " << mysql_num_rows(result) << std::endl;
+	ss << "tables: " << mysql_num_rows(result) << endl;
 	while ( ( row=mysql_fetch_row(result)) != NULL )
 	{
-		cout << row[0] << std::endl;
+		ss << row[0] << endl;
 	}
-
+	Client->updateReplyMessage(ss.str());
 	mysql_free_result(result);
-	mysql_close(Client->getDbFd());
+	// mysql_close(Client->getDbFd());
 }

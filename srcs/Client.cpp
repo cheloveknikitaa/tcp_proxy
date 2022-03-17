@@ -28,9 +28,10 @@ void Client::connection(){
 		_connection = mysql_real_connect(&mysql, _host.c_str(), _user.c_str(), _pass.c_str(), _db.c_str(), stoi(_port), 0, 0);
 		if (_connection == NULL)
 		{
+			std::cout <<  mysql_error(&mysql) << "\n";
 			_response += mysql_error(&mysql);
-			_response += "\n";
-			_need_disconected = true;
+			_response += "\nbye!\n";
+			need_disconected = true;
 			return ;
 		}
 		_response += "connected!\nquery: ";
@@ -56,3 +57,12 @@ int Client::getFd(){
 	return _UserFd;
 }
 
+void Client::updateReplyMessage(string tmp){
+	_response += tmp;
+}
+
+Client::~Client(){
+	close(_UserFd);
+	if (_connection)
+		mysql_close(_connection);
+}

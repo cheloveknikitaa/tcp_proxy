@@ -5,6 +5,9 @@
 // #include <conio.h>
 #include <string>
 #include <iostream>
+#include <unistd.h>
+
+#include "Connection.hpp"
 
 // #include <cppconn/driver.h>
 // #include <cppconn/exception.h>
@@ -24,15 +27,14 @@ private:
     string _db;
     string _response;
     string _IncomingBuffer;
-    bool _need_disconected;
-    MYSQL *_connection;
+    Connection _connection;
 public:
+    bool need_disconected;
 	bool registred { false };
     Client(int const UserFd);
     ~Client();
-    void response(const char *query);
-    void connection();
 	string getReplyMessage();
+	void updateReplyMessage(string tmp);
 	string& getIncomingBuffer();
 
 	MYSQL *getDbFd();

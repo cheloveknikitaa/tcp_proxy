@@ -13,6 +13,7 @@
 #include <vector>
 #include <cerrno>
 #include <limits>
+#include <sstream>
 
 #include "Client.hpp"
 
