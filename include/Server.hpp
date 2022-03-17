@@ -1,45 +1,27 @@
 #pragma once
 
-#include </usr/include/mysql/mysql.h>
-#include <iostream>
-#include <string>
-#include <string.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
 #include <sys/types.h>
-#include <netdb.h>
-#include <fcntl.h>
+#include <sys/socket.h>
+#include <string.h>
+#include <errno.h>
+#include <stdexcept>
+#include <string>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <unistd.h>
-#include <vector>
-#include <cerrno>
-#include <limits>
-#include <sstream>
+#include <iostream>
+#include <exception>
+#include <stdio.h>
 
-#include "Client.hpp"
-
-class Client;
+#define BUFFER_SIZE 512
 
 using namespace std;
 
-#define SIZE 512
-
 class Server {
 private:
-	bool _LoopListen;
-	int _Sockfd;
-	addrinfo *_ServInfo;
-	socklen_t _Socklen;
-	fd_set _FdsSet;
-	int _MaxFd;
-	vector<Client *> _Clients;
-	Server();
+	int _server;
 public:
-	Server(char *port);
+	Server(int port);
 	~Server();
-
 	void run();
-	void reader_client();
-	void send_client();
-	void processCmd(Client *Client);
-	void query(Client *Client);
 };

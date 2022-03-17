@@ -1,153 +1,40 @@
 #include "Server.hpp"
 
-Server::Server(char *port):
-        _LoopListen(true),
-        _Sockfd(-1),
-        _ServInfo(NULL),
-        _Socklen(0),
-        _FdsSet(),
-        _MaxFd(0)
+Server::Server(int port)
 {
-    addrinfo hints;
-    memset(&hints, 0, sizeof (hints));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = AI_PASSIVE;
-    if (getaddrinfo(NULL, port, &hints, &_ServInfo))
-        throw std::runtime_error(
-                string("getaddrinfo error: ") + gai_strerror(errno));
-    _Sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (_Sockfd < 0)
-        throw std::runtime_error(string("Socket: ") + strerror(errno));
-    if (fcntl(_Sockfd, F_SETFL, O_NONBLOCK) < 0)
-        throw std::runtime_error(string("fcntl: ") + strerror(errno));
-    _Socklen = sizeof(sockaddr);
-    if (bind(_Sockfd, _ServInfo->ai_addr, _Socklen))
-        throw std::runtime_error(string("bind: ") + strerror(errno));
-    if (listen(_Sockfd, SOMAXCONN))
-        throw std::runtime_error(string("listen: ") + strerror(errno));
-}
-
-Server::~Server(){
-    freeaddrinfo(_ServInfo);
-    close(_Sockfd);
-}
-
-void Server::run() {
-    std::cout << "Waiting for a connection..." << '\n';
-    while (_LoopListen) {
-        //GetConnectionPart
-        int const UserFd = accept(_Sockfd, _ServInfo->ai_addr, &_Socklen);
-        if (UserFd >= 0) {
-            if (UserFd > _MaxFd) {
-                _MaxFd = UserFd;
-            }
-            fcntl(UserFd, F_SETFD, O_NONBLOCK);
-            FD_SET(UserFd, &_FdsSet);
-#ifdef __linux__
-            sockaddr_in AddrUser = {0,0,{0},{0}};
-#elif __APPLE__
-            sockaddr_in AddrUser = {0, 0, 0, {0}, {0}};
-#endif
-            socklen_t Socklen = sizeof(AddrUser);
-            getpeername(UserFd, (sockaddr *) &AddrUser, &Socklen);
-            std::cout << "+====================CONNECTED======================+" << std::endl;
-            std::cout << "<<<<<<< " << inet_ntoa(AddrUser.sin_addr) << std::endl;
-            std::cout << "+===================================================+" << std::endl;
-			_Clients.push_back(new Client(UserFd));
-        }
-        send_client();
-        reader_client();
-    }
-}
-
-void Server::send_client(){
-	for (vector<Client *>::iterator User = _Clients.begin(); User != _Clients.end(); ++User) {
-		std::string ReplyMessage = (*User)->getReplyMessage();
-		if (not ReplyMessage.empty()) {
-			// std::cout << "+=======================out=========================+" << std::endl;
-			// std::cout << ReplyMessage;
-			// std::cout << "+===================================================+" << std::endl;
-			send((*User)->getFd(), ReplyMessage.c_str(), ReplyMessage.length(), MSG_NOSIGNAL);
-		}
-		if ((*User)->need_disconected){
-			FD_CLR((*User)->getFd(), &_FdsSet);
-			// close((*User)->getFd());
-			delete (*User);
-			User = _Clients.erase(User);
-		}
-		if (User == _Clients.end())
-			break;
+	_server = socket(AF_INET, SOCK_STREAM, 0);
+	if (_server == -1) {
+		throw runtime_error(string("Socket: ") + strerror(errno));
+	}
+	struct sockaddr_in adr;
+	memset(&adr, 0, sizeof adr);
+	adr.sin_family = AF_INET;
+	adr.sin_port = htons(port);
+	if (bind(_server, (struct sockaddr *)&adr, sizeof adr) == -1){
+		throw runtime_error(string("Bind: ") + strerror(errno));
+	}
+	if (listen(_server, 5) == -1) {
+		throw runtime_error(string("Listen: ") + strerror(errno));
 	}
 }
 
-void Server::reader_client(){
-	timeval tm = {0, 1000};
-	fd_set fdsCopy = _FdsSet;
-	if (select(_MaxFd + 1, &fdsCopy, NULL, NULL, &tm) < 0) {
-		throw std::runtime_error(std::string("Error: Select") + strerror(errno));
+void Server::run(){
+	struct sockaddr_in adr;
+	memset(&adr, 0, sizeof adr);
+	socklen_t adrlen = sizeof adr;
+	int fd = accept(_server, (struct sockaddr *)&adr, &adrlen);
+	if (fd == -1) {
+		throw runtime_error(string("Accept: ") + strerror(errno));
 	}
-	for (std::vector<Client *>::iterator Client = _Clients.begin();
-		 Client != _Clients.end(); ++Client)
-	{
-		if (FD_ISSET((*Client)->getFd(), &fdsCopy) > 0)
-		{
-			FD_CLR((*Client)->getFd(), &fdsCopy);
-			char Buffer[SIZE] = { 0 };
-			ssize_t ReadByte = 0;
-			ReadByte = recv((*Client)->getFd(), Buffer, SIZE - 1, 0);
-			if (ReadByte < 0) {
-				continue ;
-			}
-			if (ReadByte == 0) {
-				// .
-			} else {
-				(*Client)->getIncomingBuffer() += Buffer;
-				// std::cout << "+=======================in==========================+" << std::endl;
-				// std::cout << (*Client)->getIncomingBuffer();
-				// std::cout << "+===================================================+" << std::endl;
-				processCmd(*Client);
-			}
-		}
+	ssize_t nread;
+	char buf[BUFFER_SIZE];
+	nread = recv(fd, buf, BUFFER_SIZE, MSG_NOSIGNAL);
+	if (nread == -1) {
+		throw runtime_error(string("Recv: ") + strerror(errno));
+	} else if (nread == 0) {
+		
 	}
+	cout << buf << endl;
 }
 
-void Server::processCmd(Client *Client)
-{
-	if (Client->getIncomingBuffer().end()[-1] != '\n') {
-		return ;
-	}
-	if (!Client->registred){
-		Client->connection();
-		return;
-	}
-	query(Client);
-}
-
-void Server::query(Client *Client){
-	MYSQL_RES *result;
-	MYSQL_ROW row;
-	int state;
-	stringstream ss;
-
-	cout << Client->getIncomingBuffer().c_str();
-	state = mysql_query(Client->getDbFd(), Client->getIncomingBuffer().c_str());
-	if (state !=0)
-	{
-		ss << mysql_error(Client->getDbFd()) << "\n";
-		cout << ss.str();
-		Client->updateReplyMessage(ss.str());
-		return;
-	}
-
-	result = mysql_store_result(Client->getDbFd());
-
-	ss << "tables: " << mysql_num_rows(result) << endl;
-	while ( ( row=mysql_fetch_row(result)) != NULL )
-	{
-		ss << row[0] << endl;
-	}
-	Client->updateReplyMessage(ss.str());
-	mysql_free_result(result);
-	// mysql_close(Client->getDbFd());
-}
+Server::~Server() {};
