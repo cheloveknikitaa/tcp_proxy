@@ -54,7 +54,88 @@ void Server::run() {
             std::cout << "+====================CONNECTED======================+" << std::endl;
             std::cout << "<<<<<<< " << inet_ntoa(AddrUser.sin_addr) << std::endl;
             std::cout << "+===================================================+" << std::endl;
+			_Clients.push_back(new Client(UserFd));
         }
-
+        send_client();
+        reader_client();
     }
+}
+
+void Server::send_client(){
+	for (vector<Client *>::iterator User = _Clients.begin(); User != _Clients.end(); ++User) {
+		std::string ReplyMessage = (*User)->getReplyMessage();
+		if (not ReplyMessage.empty()) {
+			// std::cout << "+=======================out=========================+" << std::endl;
+			// std::cout << ReplyMessage;
+			// std::cout << "+===================================================+" << std::endl;
+			send((*User)->getFd(), ReplyMessage.c_str(), ReplyMessage.length(), MSG_NOSIGNAL);
+		}
+	}
+}
+
+void Server::reader_client(){
+	timeval tm = {0, 1000};
+	fd_set fdsCopy = _FdsSet;
+	if (select(_MaxFd + 1, &fdsCopy, NULL, NULL, &tm) < 0) {
+		throw std::runtime_error(std::string("Error: Select") + strerror(errno));
+	}
+	for (std::vector<Client *>::iterator Client = _Clients.begin();
+		 Client != _Clients.end(); ++Client)
+	{
+		if (FD_ISSET((*Client)->getFd(), &fdsCopy) > 0)
+		{
+			FD_CLR((*Client)->getFd(), &fdsCopy);
+			char Buffer[SIZE] = { 0 };
+			ssize_t ReadByte = 0;
+			ReadByte = recv((*Client)->getFd(), Buffer, SIZE - 1, 0);
+			if (ReadByte < 0) {
+				continue ;
+			}
+			if (ReadByte == 0) {
+				// .
+			} else {
+				(*Client)->getIncomingBuffer() += Buffer;
+				// std::cout << "+=======================in==========================+" << std::endl;
+				// std::cout << (*Client)->getIncomingBuffer();
+				// std::cout << "+===================================================+" << std::endl;
+				processCmd(*Client);
+			}
+		}
+	}
+}
+
+void Server::processCmd(Client *Client)
+{
+	if (Client->getIncomingBuffer().end()[-1] != '\n') {
+		return ;
+	}
+	if (!Client->registred){
+		Client->connection();
+		return;
+	}
+	query(Client);
+}
+
+void Server::query(Client *Client){
+	MYSQL_RES *result;
+	MYSQL_ROW row;
+	int state;
+
+	state = mysql_query(Client->getDbFd(), Client->getIncomingBuffer().c_str());
+	if (state !=0)
+	{
+		std::cout << mysql_error(Client->getDbFd()) << std::endl;
+		return;
+	}
+
+	result = mysql_store_result(Client->getDbFd());
+
+	std::cout << "tables: " << mysql_num_rows(result) << std::endl;
+	while ( ( row=mysql_fetch_row(result)) != NULL )
+	{
+		cout << row[0] << std::endl;
+	}
+
+	mysql_free_result(result);
+	mysql_close(Client->getDbFd());
 }
