@@ -1,7 +1,7 @@
 TARGET		:= proxy_server
 CXX			:= clang++
-CXXFLAGS	:= -pedantic-errors -Wall -Wextra -Werror -std=c++98 -pedantic -fdiagnostics-color=always
-LDFLAGS		:= -L/usr/lib -lstdc++ -lm
+CXXFLAGS	:= -pedantic-errors -Wall -Wextra -Werror -pedantic -fdiagnostics-color=always
+LDFLAGS		:= -L/usr/lib -lstdc++ -lm -lmysqlclient
 BUILD		:= ./build
 OBJ_DIR		:= $(BUILD)/objects
 APP_DIR		:= $(BUILD)/apps
