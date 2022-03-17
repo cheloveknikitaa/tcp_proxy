@@ -38,11 +38,7 @@ void Server::run() {
             }
             fcntl(UserFd, F_SETFD, O_NONBLOCK);
             FD_SET(UserFd, &_FdsSet);
-#ifdef __linux__
-            sockaddr_in AddrUser = {0,0,{0},{0}};
-#elif __APPLE__
             sockaddr_in AddrUser = {0, 0, 0, {0}, {0}};
-#endif
             socklen_t Socklen = sizeof(AddrUser);
             getpeername(UserFd, (sockaddr *) &AddrUser, &Socklen);
             std::cout << "+====================CONNECTED======================+" << std::endl;

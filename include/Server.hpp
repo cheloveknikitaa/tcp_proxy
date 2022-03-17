@@ -1,25 +1,13 @@
 #pragma once
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <string.h>
-#include <errno.h>
-#include <stdexcept>
-#include <string>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <iostream>
-#include <exception>
-#include <stdio.h>
-
-#define BUFFER_SIZE 512
-
-using namespace std;
+#include "Utils.hpp"
 
 class Server {
 private:
 	int _server;
+	vector<Client *> _Clients;
+	int _MaxFd, _MaxDbFd;
+	fd_set _FdsSet;
 public:
 	Server(int port);
 	~Server();
