@@ -9,7 +9,7 @@ int Socket(int domain, int type, int protocol){
 }
 
 int Bind(int socket, const struct sockaddr *address,
-		socklen_t address_len){
+		socklen_t address_len) {
 	int res = bind(socket, address, address_len);
 	if (res == -1) {
 		throw runtime_error(string("Bind: ") + strerror(errno));
@@ -85,4 +85,31 @@ void Send(int fd, string msg) {
 	}
 }
 
+void sigHendler(int signum){
+	if (signum == SIGINT ||
+		signum == SIGTERM){
+		exit(EXIT_SUCCESS);
+	}
+}
+
+void createLog(string str, string ip, string port) {
+	time_t now = time(0);
+	char* dt = ctime(&now);
+	ofstream file;
+	file.open("log.txt", ios::app);
+	if (file.is_open() == false) {
+		throw runtime_error(string("log.txt: ") + strerror(errno));
+	}
+	file << "<>+++<>\n" + string(dt) + ip + ":" + port + "\n" + str + "<>---<>\n";
+	file.close();
+}
+
+int containsSql(string str){
+	static const vector<string>sql = { "ADD", "ALL", "ALTER", "AND", "ANY", "AS", "ASC", "BACKUP", "BETWEEN", "CASE", "CHECK", "COLUMN", "CONSTRAINT", "CREATE", "DATABASE", "DEFAULT", "DELETE", "DESC", "DISTINCT", "DROP", "EXEC", "EXISTS", "FOREIGN KEY", "FROM", "FULL", "GROUP BY", "HAVING", "IN", "INDEX", "INNER", "INSERT", "IS NULL", "IS NOT NULL", "JOIN", "LEFT JOIN", "LIKE", "LIMIT", "NOT", "NOT NULL", "OR", "ORDER BY", "OUTER JOIN", "PRIMARY KEY", "PROCEDURE", "RIGHT JOIN", "ROWNUM", "SELECT", "SET", "TABLE", "TOP", "TRUNCATE", "UNION", "UNIQUE", "UPDATE", "VALUES", "VIEW", "WHERE" };
+	for(auto cmd = sql.begin(); cmd != sql.end(); ++cmd){
+		if (strstr(str.c_str(), cmd->c_str()))
+			return 1;
+	}
+	return 0;
+}
 

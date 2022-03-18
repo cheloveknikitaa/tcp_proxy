@@ -18,7 +18,6 @@ void Server::run(){
 	fd_set rfds;
 	while (1) {
 		rfds = _FdsSet;
-		//GetConnectionPart
 		select(_MaxFd + 1, &rfds, NULL, NULL, NULL);
 		if (FD_ISSET(_server, &rfds)){
 			newConnection();
@@ -36,7 +35,6 @@ void Server::run(){
 			if (Client == _Clients.end())
 				break;
 		}
-
 	}
 }
 
@@ -53,4 +51,13 @@ void Server::newConnection(){
 	}
 }
 
-Server::~Server() {}
+Server::~Server() {
+	for(std::vector<Client *>::iterator Client = _Clients.begin();
+		Client != _Clients.end(); ++Client) {
+		delete (*Client);
+		Client = _Clients.erase(Client);
+		if (Client == _Clients.end())
+			break;
+	}
+	close(_server);
+}

@@ -16,7 +16,7 @@ int Client::getDb() { return _db; }
 
 void Client::connection(){
 	string query = _bufferFromClient;
-	query.end()[-1] = '\0';
+	query.erase(query.end() - 1);
 	if (_ipDb.empty() ) {
 		_ipDb = query;
 		_bufferToClient = "port: ";
@@ -49,7 +49,9 @@ void Client::recv_send(fd_set &rfds){
 		Send(_fd, _bufferToClient);
 		_bufferToClient.clear();
 	}
-	if (!_bufferFromClient.empty()){
+	if (!_bufferFromClient.empty() && _bufferFromClient.end()[-1] == '\n'){
+		if (containsSql(_bufferFromClient))
+			createLog(_bufferFromClient, _ipDb, _portDb);
 		Send(_db, _bufferFromClient);
 		_bufferFromClient.clear();
 	}

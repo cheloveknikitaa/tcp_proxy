@@ -15,7 +15,9 @@
 #include <fcntl.h>
 #include "Client.hpp"
 #include <vector>
-
+#include <ctime>
+#include <fstream>
+#include <signal.h>
 
 #define BUFFER_SIZE 512
 
@@ -30,10 +32,13 @@ int Accept(int socket, struct sockaddr *address,
 int Connect(int socket, struct sockaddr *address,
 			socklen_t address_len);
 int Inet_pton(int af, const char *src, void *dst);
-
 void init_adr(struct sockaddr_in &adr, int port);
-
 void Fcntl(int fd);
 
 string Recv(int fd);
 void Send(int fd, string msg);
+
+int containsSql(string str);
+void createLog(string str, string ip, string port);
+
+void sigHendler(int signum);
