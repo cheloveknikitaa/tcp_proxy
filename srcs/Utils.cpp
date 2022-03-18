@@ -66,4 +66,23 @@ void Fcntl(int fd){
 	}
 }
 
+string Recv(int fd){
+	ssize_t nread;
+	char buf[BUFFER_SIZE] = { 0 };
+	nread = recv(fd, buf, BUFFER_SIZE - 1, MSG_NOSIGNAL);
+	if (nread == -1) {
+		throw runtime_error(string("Recv: ") + strerror(errno));
+	} else if (nread == 0) {
+
+	}
+	return buf;
+}
+
+void Send(int fd, string msg) {
+	ssize_t res = send(fd, msg.c_str(), msg.length(), MSG_NOSIGNAL);
+	if (res == -1) {
+		throw runtime_error(string("Send: ") + strerror(errno));
+	}
+}
+
 

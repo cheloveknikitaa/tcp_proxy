@@ -34,3 +34,6 @@ int Inet_pton(int af, const char *src, void *dst);
 void init_adr(struct sockaddr_in &adr, int port);
 
 void Fcntl(int fd);
+
+string Recv(int fd);
+void Send(int fd, string msg);

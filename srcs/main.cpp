@@ -6,7 +6,7 @@ int main(int argc, char const *argv[])
 	(void)argc;
 	(void)argv;
 	try {
-		Server serv(6667);
+		Server serv(6666);
 		serv.run();
 	} catch(std::exception& e) {
         std::cout << e.what() << std::endl;

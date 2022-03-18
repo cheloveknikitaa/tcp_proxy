@@ -6,10 +6,18 @@ class Server {
 private:
 	int _server;
 	vector<Client *> _Clients;
-	int _MaxFd, _MaxDbFd;
+	int _MaxFd;
 	fd_set _FdsSet;
 public:
 	Server(int port);
 	~Server();
 	void run();
+
+	void sendTo();
+
+	void recvFrom();
+
+	void processCmd(Client *Client);
+
+	void newConnection();
 };
