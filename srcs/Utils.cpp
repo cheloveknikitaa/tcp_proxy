@@ -73,7 +73,7 @@ string Recv(int fd){
 	if (nread == -1) {
 		throw runtime_error(string("Recv: ") + strerror(errno));
 	} else if (nread == 0) {
-
+		throw fd;
 	}
 	return buf;
 }

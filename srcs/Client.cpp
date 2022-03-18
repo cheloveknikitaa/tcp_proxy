@@ -7,6 +7,11 @@ Client::Client(int fd) {
 	_bufferToClient = "ip: ";
 }
 
+Client::~Client() {
+	close(_db);
+	close(_fd);
+}
+
 int Client::getDb() { return _db; }
 
 void Client::connection(){
@@ -17,11 +22,16 @@ void Client::connection(){
 		_bufferToClient = "port: ";
 	} else if (_portDb.empty() ) {
 		_portDb = query;
-		ConnectToDB();
+		try {
+			ConnectToDB();
+		} catch (std::exception &e) {
+			Send(_fd, e.what());
+			throw _fd;
+		}
 	}
 }
 
-void Client::recv_send(fd_set &rfds, fd_set &wfds){
+void Client::recv_send(fd_set &rfds){
 	if (FD_ISSET(_fd, &rfds)){
 		_bufferFromClient += Recv(_fd);
 		cout << _bufferFromClient;
@@ -34,15 +44,12 @@ void Client::recv_send(fd_set &rfds, fd_set &wfds){
 	}
 	if (FD_ISSET(_db, &rfds)){
 		_bufferToClient += Recv(_db);
-		if (_bufferToClient.end()[-1] != '\n') {
-			return;
-		}
 	}
-	if (FD_ISSET(_fd, &wfds) && !_bufferToClient.empty()){
+	if (!_bufferToClient.empty()){
 		Send(_fd, _bufferToClient);
 		_bufferToClient.clear();
 	}
-	if (FD_ISSET(_db, &wfds) && !_bufferFromClient.empty()){
+	if (!_bufferFromClient.empty()){
 		Send(_db, _bufferFromClient);
 		_bufferFromClient.clear();
 	}

@@ -15,9 +15,8 @@ Server::Server(int port)
 
 void Server::run(){
 	std::cout << "Waiting for a connection..." << '\n';
-	fd_set rfds, wfds;
+	fd_set rfds;
 	while (1) {
-		cout << "here\n";
 		rfds = _FdsSet;
 		//GetConnectionPart
 		select(_MaxFd + 1, &rfds, NULL, NULL, NULL);
@@ -26,7 +25,16 @@ void Server::run(){
 		}
 		for(std::vector<Client *>::iterator Client = _Clients.begin();
 			Client != _Clients.end(); ++Client) {
-			(*Client)->recv_send(rfds, wfds);
+			try {
+				(*Client)->recv_send(rfds);
+			} catch (int fd) {
+				FD_CLR(fd, &_FdsSet);
+				FD_CLR((*Client)->getDb(), &_FdsSet);
+				delete(*Client);
+				Client = _Clients.erase(Client);
+			} catch (std::exception &e) { throw e; }
+			if (Client == _Clients.end())
+				break;
 		}
 
 	}
@@ -36,10 +44,11 @@ void Server::newConnection(){
 	int const UserFd = Accept(_server, NULL, NULL);
 	if (UserFd >= 0) {
 		fcntl(UserFd, F_SETFD, O_NONBLOCK);
-		FD_SET(UserFd, &_FdsSet);
 		Client *newClient = new Client(UserFd);
 		_Clients.push_back(newClient);
 		cout << "Connected!\n";
+		FD_SET(UserFd, &_FdsSet);
+		FD_SET(newClient->getDb(), &_FdsSet);
 		_MaxFd = max(_MaxFd, max(UserFd, newClient->getDb()));
 	}
 }

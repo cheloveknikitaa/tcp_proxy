@@ -21,7 +21,7 @@ public:
 
 	void connection();
 
-	void recv_send(fd_set &rfds, fd_set &wfds);
+	void recv_send(fd_set &rfds);
 
 	void ConnectToDB();
 };
