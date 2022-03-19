@@ -25,7 +25,7 @@ void Server::run(){
 		for(std::vector<Client *>::iterator Client = _Clients.begin();
 			Client != _Clients.end(); ++Client) {
 			try {
-				(*Client)->recv_send(rfds);
+				(*Client)->recv_send(rfds, _FdsSet);
 			} catch (int fd) {
 				FD_CLR(fd, &_FdsSet);
 				FD_CLR((*Client)->getDb(), &_FdsSet);
@@ -46,7 +46,6 @@ void Server::newConnection(){
 		_Clients.push_back(newClient);
 		cout << "Connected!\n";
 		FD_SET(UserFd, &_FdsSet);
-		FD_SET(newClient->getDb(), &_FdsSet);
 		_MaxFd = max(_MaxFd, max(UserFd, newClient->getDb()));
 	}
 }

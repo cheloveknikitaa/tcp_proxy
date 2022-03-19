@@ -14,7 +14,7 @@ Client::~Client() {
 
 int Client::getDb() { return _db; }
 
-void Client::connection(){
+void Client::connection(fd_set &_FdsSet){
 	string query = _bufferFromClient;
 	query.erase(query.end() - 1);
 	if (_ipDb.empty() ) {
@@ -24,6 +24,7 @@ void Client::connection(){
 		_portDb = query;
 		try {
 			ConnectToDB();
+			FD_SET(_db, &_FdsSet);
 		} catch (std::exception &e) {
 			Send(_fd, e.what());
 			throw _fd;
@@ -31,13 +32,13 @@ void Client::connection(){
 	}
 }
 
-void Client::recv_send(fd_set &rfds){
+void Client::recv_send(fd_set &rfds, fd_set &_FdsSet){
 	if (FD_ISSET(_fd, &rfds)){
 		_bufferFromClient += Recv(_fd);
 		cout << _bufferFromClient;
 		if (_bufferFromClient.end()[-1] == '\n') {
 			if (!_registred) {
-				connection();
+				connection(_FdsSet);
 				_bufferFromClient.clear();
 			}
 		}

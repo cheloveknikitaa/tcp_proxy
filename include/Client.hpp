@@ -19,9 +19,9 @@ public:
 	~Client();
 	int getDb();
 
-	void connection();
+	void connection(fd_set &_FdsSet);
 
-	void recv_send(fd_set &rfds);
+	void recv_send(fd_set &rfds, fd_set &_FdsSet);
 
 	void ConnectToDB();
 };

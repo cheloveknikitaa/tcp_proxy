@@ -13,11 +13,5 @@ public:
 	~Server();
 	void run();
 
-	void sendTo();
-
-	void recvFrom();
-
-	void processCmd(Client *Client);
-
 	void newConnection();
 };
