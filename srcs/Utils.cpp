@@ -77,23 +77,22 @@ void Fcntl(int fd){
 	}
 }
 
-string Recv(int fd, ssize_t &nread){
+void	Recv(int fd, ssize_t &bufread, char *res){
 	char buf[BUFFER_SIZE] = { 0 };
-	nread = recv(fd, buf, BUFFER_SIZE - 1, MSG_NOSIGNAL);
+	ssize_t nread;
+	nread = recv(fd, buf, BUFFER_SIZE - 1 - bufread, MSG_NOSIGNAL);
 	cout << "read byte: " << nread << "\n";
 	if (nread == -1) {
 		throw runtime_error(string("Recv: ") + strerror(errno));
 	} else if (nread == 0) {
 		throw fd;
 	}
-	return buf;
+	Memcpy(res, buf, nread, bufread);
 }
 
-void Send(int fd, string msg, ssize_t &send_byte ) {
-	if (send_byte == 0)
-		send_byte = msg.size();
-	cout << "Send msg: " << msg.c_str() << " byte: " << msg.size() << "\n";
-	ssize_t res = send(fd, msg.c_str(), msg.size() , MSG_NOSIGNAL);
+void Send(int fd, char *msg, ssize_t &send_byte ) {
+	cout << "Send msg: " << msg << " byte: " << send_byte << "\n";
+	ssize_t res = send(fd, msg, send_byte , MSG_NOSIGNAL);
 	if (res == -1) {
 		throw runtime_error(string("Send: ") + strerror(errno));
 	}
@@ -130,3 +129,11 @@ int containsSql(string str){
 	return 0;
 }
 
+void Memcpy(char *dst, const char *src, ssize_t n, ssize_t &byte){
+	memcpy(dst + byte, src, n);
+	byte += n;
+}
+
+void Memmove(char *dst, const char *src, ssize_t n, ssize_t &byte){
+
+}

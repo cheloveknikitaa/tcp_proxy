@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Utils.hpp"
+#define BUFFER_SIZE 512
 
 using namespace std;
 
@@ -10,11 +11,11 @@ private:
 	int _fd;
 	string _portDb;
 	string _ipDb;
-	string _bufferFromClient;
-	string _bufferToClient;
+	char _bufferFromClient[BUFFER_SIZE] { 0 };
+	char _bufferToClient[BUFFER_SIZE] { 0 };
 	bool _registred;
-	ssize_t _byteFrom;
-	ssize_t _byteTo;
+	ssize_t _byteFrom = 0;
+	ssize_t _byteTo = 0;
 public:
 	Client(int fd);
 
