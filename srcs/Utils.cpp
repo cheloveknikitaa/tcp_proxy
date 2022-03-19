@@ -91,9 +91,9 @@ string Recv(int fd, ssize_t &nread){
 
 void Send(int fd, string msg, ssize_t &send_byte ) {
 	if (send_byte == 0)
-		send_byte = msg.
-	cout << "Send msg: " << msg.c_str() << " byte: " << send_byte << "\n";
-	ssize_t res = send(fd, msg.c_str(), send_byte , MSG_NOSIGNAL);
+		send_byte = msg.size();
+	cout << "Send msg: " << msg.c_str() << " byte: " << msg.size() << "\n";
+	ssize_t res = send(fd, msg.c_str(), msg.size() , MSG_NOSIGNAL);
 	if (res == -1) {
 		throw runtime_error(string("Send: ") + strerror(errno));
 	}

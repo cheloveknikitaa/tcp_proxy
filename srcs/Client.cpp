@@ -26,7 +26,8 @@ void Client::connection(fd_set &_FdsSet){
 			ConnectToDB();
 			FD_SET(_db, &_FdsSet);
 		} catch (std::exception &e) {
-			Send(_fd, e.what(), 0);
+			ssize_t b = 0;
+			Send(_fd, e.what(), b);
 			throw _fd;
 		}
 	}
