@@ -60,6 +60,7 @@ void Server::newConnection(){
 			newClient = new Client(UserFd);
 		} else {
 			newClient = new Client(UserFd, _ip, _port);
+			FD_SET(newClient->getDb(), &_FdsSet);
 		}
 		_Clients.push_back(newClient);
 		cout << "Connected!\n";
