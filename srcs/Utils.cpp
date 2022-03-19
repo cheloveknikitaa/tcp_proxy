@@ -77,27 +77,30 @@ void Fcntl(int fd){
 	}
 }
 
-void	Recv(int fd, ssize_t &bufread, char *res){
+string Recv(int fd, ssize_t &bufread, int wfd){
 	char buf[BUFFER_SIZE] = { 0 };
 	ssize_t nread;
 	nread = recv(fd, buf, BUFFER_SIZE - 1 - bufread, MSG_NOSIGNAL);
-	cout << "read byte: " << nread << "\n";
+	cout << "read msg: " << buf << " read byte: " << nread << "\n";
 	if (nread == -1) {
 		throw runtime_error(string("Recv: ") + strerror(errno));
 	} else if (nread == 0) {
 		throw fd;
 	}
-	Memcpy(res, buf, nread, bufread);
+	write(wfd, buf, nread);
+	bufread += nread;
+	return buf;
 }
 
-void Send(int fd, char *msg, ssize_t &send_byte ) {
-	cout << "Send msg: " << msg << " byte: " << send_byte << "\n";
-	ssize_t res = send(fd, msg, send_byte , MSG_NOSIGNAL);
+void Send(int fd, ssize_t &send_byte , int rfd) {
+	char buf[BUFFER_SIZE] = { 0 };
+	ssize_t nread = read(rfd, buf, send_byte);
+	cout << "Send msg: " << buf << " byte: " << send_byte << "\n";
+	send_byte -= nread;
+	ssize_t res = send(fd, buf, nread , MSG_NOSIGNAL);
 	if (res == -1) {
 		throw runtime_error(string("Send: ") + strerror(errno));
 	}
-	send_byte -= res;
-	cout << "send_byte after send: " << send_byte << "\n";
 }
 
 void sigHendler(int signum){
@@ -129,11 +132,9 @@ int containsSql(string str){
 	return 0;
 }
 
-void Memcpy(char *dst, const char *src, ssize_t n, ssize_t &byte){
-	memcpy(dst + byte, src, n);
-	byte += n;
-}
-
-void Memmove(char *dst, const char *src, ssize_t n, ssize_t &byte){
-
+void Pipe(int *fd) {
+	int res = pipe(fd);
+	if (res == -1) {
+		throw runtime_error(string("pipe : ") + strerror(errno));
+	}
 }

@@ -4,7 +4,10 @@ Client::Client(int fd) {
 	_db = Socket(AF_INET, SOCK_STREAM, 0);
 	_fd = fd;
 	_registred = false;
-	Memcpy(_bufferToClient, "ip: ", 4, _byteTo);
+	Pipe(_toUser);
+	Pipe(_fromUser);
+	write(_toUser[1], "ip: ", 4);
+	_byteTo = 4;
 }
 
 Client::~Client() {
@@ -15,12 +18,16 @@ Client::~Client() {
 int Client::getDb() { return _db; }
 
 void Client::connection(fd_set &_FdsSet){
-	string query = _bufferFromClient;
+	char buf[BUFFER_SIZE] = { 0 };
+	ssize_t nread = read(_fromUser[0], buf, _byteFrom);
+	_byteFrom -= nread;
+	string query = buf;
 
 	query.erase(query.end() - 1);
 	if (_ipDb.empty() ) {
 		_ipDb = query;
-		Memcpy(_bufferToClient, "port: ", 6 , _byteTo);
+		write(_toUser[1], "port: ", 6);
+		_byteTo = 6;
 	} else if (_portDb.empty() ) {
 		_portDb = query;
 		try {
@@ -35,22 +42,25 @@ void Client::connection(fd_set &_FdsSet){
 
 void Client::recv_send(fd_set &rfds, fd_set &_FdsSet){
 	if (FD_ISSET(_fd, &rfds)){
-		Recv(_fd, _byteFrom, _bufferFromClient);
-		cout << _bufferFromClient;
+		_buffer = Recv(_fd, _byteFrom, _fromUser[1]);
 		if (!_registred) {
 			connection(_FdsSet);
+			_buffer.clear();
 		}
 	}
 	if (FD_ISSET(_db, &rfds)){
-		Recv(_db, _byteTo, _bufferToClient);
+		Recv(_db, _byteTo, _toUser[1]);
 	}
 	if (_byteTo){
-		Send(_fd, _bufferToClient, _byteTo);
+		cout << "SEND TO\n";
+		Send(_fd, _byteTo, _toUser[0]);
 	}
 	if (_byteFrom){
-		if (containsSql(_bufferFromClient))
-			createLog(_bufferFromClient, _ipDb, _portDb);
-		Send(_db, _bufferFromClient, _byteFrom);
+		cout << "SEND FROM\n";
+		if (containsSql(_buffer))
+			createLog(_buffer, _ipDb, _portDb);
+		_buffer.clear();
+		Send(_db, _byteFrom, _fromUser[0]);
 	}
 }
 

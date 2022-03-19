@@ -11,8 +11,9 @@ private:
 	int _fd;
 	string _portDb;
 	string _ipDb;
-	char _bufferFromClient[BUFFER_SIZE] { 0 };
-	char _bufferToClient[BUFFER_SIZE] { 0 };
+	string _buffer;
+	int _toUser[2];
+	int _fromUser[2];
 	bool _registred;
 	ssize_t _byteFrom = 0;
 	ssize_t _byteTo = 0;

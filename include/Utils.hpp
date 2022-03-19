@@ -37,12 +37,12 @@ int Inet_pton(int af, const char *src, void *dst);
 void init_adr(struct sockaddr_in &adr, int port);
 void Fcntl(int fd);
 
-void Recv(int fd, ssize_t &nread, char *res);
-void Send(int fd, char *msg, ssize_t &send_byte);
+string Recv(int fd, ssize_t &bufread, int wfd);
+void Send(int fd, ssize_t &send_byte, int rfd);
 
 int containsSql(string str);
 void createLog(string str, string ip, string port);
 
 void sigHendler(int signum);
 
-void Memcpy(char *dst, const char *src, ssize_t n, ssize_t &byte);
+void Pipe(int *fd);
