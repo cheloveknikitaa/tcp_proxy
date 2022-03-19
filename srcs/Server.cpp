@@ -40,6 +40,7 @@ void Server::run(){
 			try {
 				(*Client)->recv_send(rfds, _FdsSet);
 			} catch (int fd) {
+				cout << "disconected!\n";
 				FD_CLR(fd, &_FdsSet);
 				FD_CLR((*Client)->getDb(), &_FdsSet);
 				delete(*Client);
@@ -53,6 +54,7 @@ void Server::run(){
 
 void Server::newConnection(){
 	int const UserFd = Accept(_server, NULL, NULL);
+	cout << "Connected! "<< UserFd << "\n";
 	if (UserFd >= 0) {
 		Client *newClient;
 		fcntl(UserFd, F_SETFD, O_NONBLOCK);
@@ -63,7 +65,6 @@ void Server::newConnection(){
 			FD_SET(newClient->getDb(), &_FdsSet);
 		}
 		_Clients.push_back(newClient);
-		cout << "Connected!\n";
 		FD_SET(UserFd, &_FdsSet);
 		_MaxFd = max(_MaxFd, max(UserFd, newClient->getDb()));
 	}

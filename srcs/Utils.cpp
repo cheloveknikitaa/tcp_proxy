@@ -39,6 +39,7 @@ int Accept(int socket, struct sockaddr *address,
 int Connect(int socket, struct sockaddr *address,
 			socklen_t address_len){
     int res = connect(socket, address, address_len);
+	cout << "here!\n";
     if (res == -1) {
         throw runtime_error(string("Connect: ") + strerror(errno));
     }
@@ -77,10 +78,13 @@ void Fcntl(int fd){
 	}
 }
 
-string Recv(int fd, ssize_t &bufread, int wfd){
+void Recv(int fd, ssize_t &bufread, int wfd){
 	char buf[BUFFER_SIZE] = { 0 };
 	ssize_t nread;
-	nread = recv(fd, buf, BUFFER_SIZE - 1 - bufread, MSG_NOSIGNAL);
+	nread = recv(fd, buf, BUFFER_SIZE - 1, MSG_NOSIGNAL);
+	if (int(buf[4]) == COM_QUERY || int(buf[4]) == COM_STM_PREPARE){
+		createLog(buf + 5);
+	}
 	cout << "read msg: " << buf << " read byte: " << nread << "\n";
 	if (nread == -1) {
 		throw runtime_error(string("Recv: ") + strerror(errno));
@@ -88,8 +92,7 @@ string Recv(int fd, ssize_t &bufread, int wfd){
 		throw fd;
 	}
 	write(wfd, buf, nread);
-	bufread += nread;
-	return buf;
+	bufread = nread;
 }
 
 void Send(int fd, ssize_t &send_byte , int rfd) {
@@ -110,7 +113,7 @@ void sigHendler(int signum){
 	}
 }
 
-void createLog(string str, string ip, string port) {
+void createLog(char *str) {
 	time_t now = time(0);
 	char* dt = ctime(&now);
 	ofstream file;
@@ -118,18 +121,8 @@ void createLog(string str, string ip, string port) {
 	if (file.is_open() == false) {
 		throw runtime_error(string("log.txt: ") + strerror(errno));
 	}
-	file << "<>+++<>\n" + string(dt) + ip + ":" + port + "\n" + str + "<>---<>\n";
+	file << "<>+++<>\n" + string(dt) + string(str) + "\n<>---<>\n";
 	file.close();
-}
-
-int containsSql(string str){
-	static const vector<string>sql = { "ADD", "ALL", "ALTER", "AND", "ANY", "AS", "ASC", "BACKUP", "BETWEEN", "CASE", "CHECK", "COLUMN", "CONSTRAINT", "CREATE", "DATABASE", "DEFAULT", "DELETE", "DESC", "DISTINCT", "DROP", "EXEC", "EXISTS", "FOREIGN KEY", "FROM", "FULL", "GROUP BY", "HAVING", "IN", "INDEX", "INNER", "INSERT", "IS NULL", "IS NOT NULL", "JOIN", "LEFT JOIN", "LIKE", "LIMIT", "NOT", "NOT NULL", "OR", "ORDER BY", "OUTER JOIN", "PRIMARY KEY", "PROCEDURE", "RIGHT JOIN", "ROWNUM", "SELECT", "SET", "TABLE", "TOP", "TRUNCATE", "UNION", "UNIQUE", "UPDATE", "VALUES", "VIEW", "WHERE" };
-	std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c){ return std::toupper(c); } );
-	for(auto cmd = sql.begin(); cmd != sql.end(); ++cmd){
-		if (strstr(str.c_str(), cmd->c_str()))
-			return 1;
-	}
-	return 0;
 }
 
 void Pipe(int *fd) {

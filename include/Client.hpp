@@ -7,11 +7,10 @@ using namespace std;
 
 class Client {
 private:
-	int _db;
-	int _fd;
+	int _db; //socket
+	int _fd; //socket
 	int _portDb;
 	string _ipDb;
-	string _buffer;
 	int _toUser[2];
 	int _fromUser[2];
 	bool _registred;

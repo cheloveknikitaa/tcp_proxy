@@ -21,6 +21,8 @@
 #include <algorithm>
 
 #define BUFFER_SIZE 512
+#define COM_QUERY 3
+#define COM_STM_PREPARE 22
 
 using namespace std;
 
@@ -37,12 +39,10 @@ int Inet_pton(int af, const char *src, void *dst);
 void init_adr(struct sockaddr_in &adr, int port);
 void Fcntl(int fd);
 
-string Recv(int fd, ssize_t &bufread, int wfd);
+void Recv(int fd, ssize_t &bufread, int wfd);
 void Send(int fd, ssize_t &send_byte, int rfd);
 
-int containsSql(string str);
-void createLog(string str, string ip, string port);
-
 void sigHendler(int signum);
+void createLog(char *str);
 
 void Pipe(int *fd);

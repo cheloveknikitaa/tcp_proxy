@@ -54,10 +54,9 @@ void Client::connection(fd_set &_FdsSet){
 
 void Client::recv_send(fd_set &rfds, fd_set &_FdsSet){
 	if (FD_ISSET(_fd, &rfds)){
-		_buffer = Recv(_fd, _byteFrom, _fromUser[1]);
+		Recv(_fd, _byteFrom, _fromUser[1]);
 		if (!_registred) {
 			connection(_FdsSet);
-			_buffer.clear();
 		}
 	}
 	if (FD_ISSET(_db, &rfds)){
@@ -69,13 +68,13 @@ void Client::recv_send(fd_set &rfds, fd_set &_FdsSet){
 	}
 	if (_byteFrom){
 		cout << "SEND FROM\n";
-		_buffer.clear();
 		Send(_db, _byteFrom, _fromUser[0]);
 	}
 }
 
 void Client::ConnectToDB(){
 	struct sockaddr_in adr;
+	cout << _ipDb << ":" << _portDb << "\n";
 	init_adr(adr, _portDb);
 	Inet_aton(_ipDb.c_str(), adr.sin_addr);
 	Connect(_db, (struct sockaddr *)&adr, sizeof adr);
