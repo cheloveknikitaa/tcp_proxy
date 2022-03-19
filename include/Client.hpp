@@ -9,7 +9,7 @@ class Client {
 private:
 	int _db;
 	int _fd;
-	string _portDb;
+	int _portDb;
 	string _ipDb;
 	string _buffer;
 	int _toUser[2];
@@ -19,7 +19,7 @@ private:
 	ssize_t _byteTo = 0;
 public:
 	Client(int fd);
-
+	Client(int fd, string ip, int port);
 	~Client();
 	int getDb();
 

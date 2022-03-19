@@ -2,6 +2,19 @@
 
 Server::Server(int port)
 {
+	_ip.clear();
+	_server = Socket(AF_INET, SOCK_STREAM, 0);
+	_MaxFd = _server;
+	struct sockaddr_in adr;
+	FD_ZERO(&_FdsSet);
+	FD_SET(_server, &_FdsSet);
+	init_adr(adr, port);
+	Bind(_server, (struct sockaddr *)&adr, sizeof adr);
+	Listen(_server, 5);
+	Fcntl(_server);
+}
+
+Server::Server(string ip, int portDb, int port) : _ip(ip), _port(portDb) {
 	_server = Socket(AF_INET, SOCK_STREAM, 0);
 	_MaxFd = _server;
 	struct sockaddr_in adr;
@@ -41,8 +54,13 @@ void Server::run(){
 void Server::newConnection(){
 	int const UserFd = Accept(_server, NULL, NULL);
 	if (UserFd >= 0) {
+		Client *newClient;
 		fcntl(UserFd, F_SETFD, O_NONBLOCK);
-		Client *newClient = new Client(UserFd);
+		if (_ip.empty()){
+			newClient = new Client(UserFd);
+		} else {
+			newClient = new Client(UserFd, _ip, _port);
+		}
 		_Clients.push_back(newClient);
 		cout << "Connected!\n";
 		FD_SET(UserFd, &_FdsSet);

@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(int fd) {
+Client::Client(int fd): _portDb(-1) {
 	_db = Socket(AF_INET, SOCK_STREAM, 0);
 	_fd = fd;
 	_registred = false;
@@ -8,6 +8,14 @@ Client::Client(int fd) {
 	Pipe(_fromUser);
 	write(_toUser[1], "ip: ", 4);
 	_byteTo = 4;
+}
+
+Client::Client(int fd, string ip, int port) : _portDb(port), _ipDb(ip) {
+	_db = Socket(AF_INET, SOCK_STREAM, 0);
+	_fd = fd;
+	ConnectToDB();
+	Pipe(_toUser);
+	Pipe(_fromUser);
 }
 
 Client::~Client() {
@@ -32,8 +40,8 @@ void Client::connection(fd_set &_FdsSet){
 		_ipDb = query;
 		write(_toUser[1], "port: ", 6);
 		_byteTo = 6;
-	} else if (_portDb.empty() ) {
-		_portDb = query;
+	} else if ( _portDb == -1 ) {
+		_portDb = stoi(query);
 		try {
 			ConnectToDB();
 			FD_SET(_db, &_FdsSet);
@@ -61,8 +69,6 @@ void Client::recv_send(fd_set &rfds, fd_set &_FdsSet){
 	}
 	if (_byteFrom){
 		cout << "SEND FROM\n";
-		if (containsSql(_buffer))
-			createLog(_buffer, _ipDb, _portDb);
 		_buffer.clear();
 		Send(_db, _byteFrom, _fromUser[0]);
 	}
@@ -70,7 +76,7 @@ void Client::recv_send(fd_set &rfds, fd_set &_FdsSet){
 
 void Client::ConnectToDB(){
 	struct sockaddr_in adr;
-	init_adr(adr, stoi(_portDb));
+	init_adr(adr, _portDb);
 	Inet_aton(_ipDb.c_str(), adr.sin_addr);
 	Connect(_db, (struct sockaddr *)&adr, sizeof adr);
 	Fcntl(_db);
