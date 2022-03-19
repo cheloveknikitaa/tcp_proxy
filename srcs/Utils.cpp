@@ -5,6 +5,8 @@ int Socket(int domain, int type, int protocol){
 	if (res == -1) {
 		throw runtime_error(string("Socket: ") + strerror(errno));
 	}
+	int yes = 1;
+	setsockopt(res, SOL_SOCKET, SO_REUSEADDR, &yes, (socklen_t)(sizeof(yes)));
 	return res;
 }
 
@@ -53,6 +55,14 @@ int Inet_pton(int af, const char *src, void *dst){
     return res;
 }
 
+int Inet_aton(const char *cp, struct in_addr &inp){
+	int res = inet_aton(cp, &inp);
+	if (res == -1) {
+		throw runtime_error(string("Inet_aton: ") + strerror(errno));
+	}
+	return res;
+}
+
 void init_adr(struct sockaddr_in &adr, int port){
 	memset(&adr, 0, sizeof adr);
 	adr.sin_family = AF_INET;
@@ -60,16 +70,17 @@ void init_adr(struct sockaddr_in &adr, int port){
 }
 
 void Fcntl(int fd){
-	int res = fcntl(fd, F_SETFD, O_NONBLOCK);
+	int flag = fcntl(fd, F_GETFL);
+	int res = fcntl(fd, F_SETFD, flag | O_NONBLOCK);
 	if (res == -1) {
 		throw runtime_error(string("fcntl: ") + strerror(errno));
 	}
 }
 
-string Recv(int fd){
-	ssize_t nread;
+string Recv(int fd, ssize_t &nread){
 	char buf[BUFFER_SIZE] = { 0 };
 	nread = recv(fd, buf, BUFFER_SIZE - 1, MSG_NOSIGNAL);
+	cout << "read byte: " << nread << "\n";
 	if (nread == -1) {
 		throw runtime_error(string("Recv: ") + strerror(errno));
 	} else if (nread == 0) {
@@ -78,11 +89,16 @@ string Recv(int fd){
 	return buf;
 }
 
-void Send(int fd, string msg) {
-	ssize_t res = send(fd, msg.c_str(), msg.length(), MSG_NOSIGNAL);
+void Send(int fd, string msg, ssize_t &send_byte ) {
+	if (send_byte == 0)
+		send_byte = msg.
+	cout << "Send msg: " << msg.c_str() << " byte: " << send_byte << "\n";
+	ssize_t res = send(fd, msg.c_str(), send_byte , MSG_NOSIGNAL);
 	if (res == -1) {
 		throw runtime_error(string("Send: ") + strerror(errno));
 	}
+	send_byte -= res;
+	cout << "send_byte after send: " << send_byte << "\n";
 }
 
 void sigHendler(int signum){

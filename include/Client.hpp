@@ -13,6 +13,8 @@ private:
 	string _bufferFromClient;
 	string _bufferToClient;
 	bool _registred;
+	ssize_t _byteFrom;
+	ssize_t _byteTo;
 public:
 	Client(int fd);
 

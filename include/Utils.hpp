@@ -32,12 +32,13 @@ int Accept(int socket, struct sockaddr *address,
 		   socklen_t *address_len);
 int Connect(int socket, struct sockaddr *address,
 			socklen_t address_len);
+int Inet_aton(const char *cp, struct in_addr &inp);
 int Inet_pton(int af, const char *src, void *dst);
 void init_adr(struct sockaddr_in &adr, int port);
 void Fcntl(int fd);
 
-string Recv(int fd);
-void Send(int fd, string msg);
+string Recv(int fd, ssize_t &nread);
+void Send(int fd, string msg, ssize_t &send_byte);
 
 int containsSql(string str);
 void createLog(string str, string ip, string port);
