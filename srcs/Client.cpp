@@ -13,6 +13,10 @@ Client::Client(int fd) {
 Client::~Client() {
 	close(_db);
 	close(_fd);
+	close(_toUser[0]);
+	close(_toUser[1]);
+	close(_fromUser[0]);
+	close(_fromUser[1]);
 }
 
 int Client::getDb() { return _db; }

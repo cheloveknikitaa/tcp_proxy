@@ -5,8 +5,8 @@ int Socket(int domain, int type, int protocol){
 	if (res == -1) {
 		throw runtime_error(string("Socket: ") + strerror(errno));
 	}
-	int yes = 1;
-	setsockopt(res, SOL_SOCKET, SO_REUSEADDR, &yes, (socklen_t)(sizeof(yes)));
+//	int yes = 1;
+//	setsockopt(res, SOL_SOCKET, SO_REUSEADDR, &yes, (socklen_t)(sizeof(yes)));
 	return res;
 }
 
