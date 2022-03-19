@@ -18,6 +18,7 @@
 #include <ctime>
 #include <fstream>
 #include <signal.h>
+#include <algorithm>
 
 #define BUFFER_SIZE 512
 

@@ -106,6 +106,7 @@ void createLog(string str, string ip, string port) {
 
 int containsSql(string str){
 	static const vector<string>sql = { "ADD", "ALL", "ALTER", "AND", "ANY", "AS", "ASC", "BACKUP", "BETWEEN", "CASE", "CHECK", "COLUMN", "CONSTRAINT", "CREATE", "DATABASE", "DEFAULT", "DELETE", "DESC", "DISTINCT", "DROP", "EXEC", "EXISTS", "FOREIGN KEY", "FROM", "FULL", "GROUP BY", "HAVING", "IN", "INDEX", "INNER", "INSERT", "IS NULL", "IS NOT NULL", "JOIN", "LEFT JOIN", "LIKE", "LIMIT", "NOT", "NOT NULL", "OR", "ORDER BY", "OUTER JOIN", "PRIMARY KEY", "PROCEDURE", "RIGHT JOIN", "ROWNUM", "SELECT", "SET", "TABLE", "TOP", "TRUNCATE", "UNION", "UNIQUE", "UPDATE", "VALUES", "VIEW", "WHERE" };
+	std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c){ return std::toupper(c); } );
 	for(auto cmd = sql.begin(); cmd != sql.end(); ++cmd){
 		if (strstr(str.c_str(), cmd->c_str()))
 			return 1;
