@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="color-scheme" content="light dark">
+
+
+	<style>
+		body {
+			-webkit-font-smoothing: antialiased;
+			font-size: 100%;
+			margin: 0;
+		}
+
+		.content {
+			background-color: rgb(32, 178, 170);       //76, 146, 143
+			color: rgb(255, 245, 238);
+			line-height: calc(100% + 6px);
+			min-width: 240px;
+		}
+
+		.icon {
+			content: url(https://pngimg.com/uploads/dinosaur/dinosaur_PNG16570.png); /*here are Dino*/
+			height: 120px;
+			width: 120px;
+		}
+
+		h1 {
+			font-size:calc(120% + 15px);
+			font-weight: 400;
+			line-height: calc(100% + 8px);
+		}
+
+		.h1 {
+			margin-inline-end: auto;
+			margin-inline-start: auto;
+		}
+
+		.take-more-info {
+			color: rgba(152, 0, 0, 0.591);
+			text-decoration: none;  /*если это строку закоментить, то переход на 418 будет подчеркнут*/
+		}
+
+		@media (max-width: 100px), (max-height: 100px) {
+			.content {
+				font-size: calc(100% - 4px);
+				line-height: calc(100% + 6px);
+			}
+			h1 {
+				font-size:calc(100% + 8px);
+				font-weight: 400;
+				line-height: calc(100% + 8px);
+			}
+		}
+
+		.content {
+			margin-inline-end: auto;
+			margin-inline-start: auto;
+			max-width: 300px;
+		}
+
+		.icon {
+			margin-inline-end: auto;
+			margin-inline-start: auto;
+		}
+		h1 {
+			text-align: center;
+		}
+		/* format of location*/
+		@media (min-width: 720px) {
+			.icon,
+			h1,
+			#subtitle,
+			.learn-more-button {
+				margin-top: 0.5rem;
+			}
+
+			.icon,
+			h1,
+			#subtitle,
+			.bulletpoints,
+			#cookie-controls {
+				margin-bottom: 1.5rem;
+			}
+
+			.content {
+				margin-top: 40px;
+				min-width: 240px;
+				padding: 100px 48px 24px;
+			}
+
+			#some-text em {
+				display: block;
+			}
+
+			em {
+				color: #671818;
+				font-style: normal;
+				margin-top: 10px;
+				min-width: 10px;
+				padding: -10px 90px 90px;
+			}
+
+
+			p {
+				display: block;
+				margin-block-start: 1em;
+				margin-block-end: 1em;
+				margin-inline-start: 0px;
+				margin-inline-end: 0px;
+			}
+
+	</style>
+
+
+
+</head>
+<head>
+	<meta name="color-scheme" content="light dark">
+	<title>What do you want?</title>
+</head>
+<body bgcolor="#20B2AA">
+<div class="content">
+	<div class="icon" role="presentation" alt></div>
+	<h1>Mi ne comprene vin</h1>
+	<div id="How it works:">
+		<div id="some-text" >
+			<em>Welcome to start page!</em>
+			Here we will talking about WebServ:
+		</div>
+		<div class="marker">
+			Let's take a look at what we've learned
+			<ul>
+				<li>
+					Headers of request and response;
+				</li>
+				<li>
+					Status codes;
+				</li>
+				<li>
+					Learn inspect of Chrome.
+				</li>
+			</ul>
+		</div>
+		<p id="subtitle">
+			<a class="take-more-info" href="./upload.html"> Do you want to uploud?</a>  <!-- /*here are link for "take more info"/*-->
+		</p>
+	</div>
+
+</div>
+</body>
+</html>

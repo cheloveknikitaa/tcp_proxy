@@ -82,9 +82,6 @@ void Recv(int fd, ssize_t &bufread, int wfd){
 	char buf[BUFFER_SIZE] = { 0 };
 	ssize_t nread;
 	nread = recv(fd, buf, BUFFER_SIZE - 1, MSG_NOSIGNAL);
-	if (int(buf[4]) == COM_QUERY || int(buf[4]) == COM_STM_PREPARE){
-		createLog(buf + 5);
-	}
 	cout << "read msg: " << buf << " read byte: " << nread << "\n";
 	if (nread == -1) {
 		throw runtime_error(string("Recv: ") + strerror(errno));
@@ -113,17 +110,17 @@ void sigHendler(int signum){
 	}
 }
 
-void createLog(char *str) {
-	time_t now = time(0);
-	char* dt = ctime(&now);
-	ofstream file;
-	file.open("log.txt", ios::app);
-	if (file.is_open() == false) {
-		throw runtime_error(string("log.txt: ") + strerror(errno));
-	}
-	file << "<>+++<>\n" + string(dt) + string(str) + "\n<>---<>\n";
-	file.close();
-}
+// void createLog(char *str) {
+// 	time_t now = time(0);
+// 	char* dt = ctime(&now);
+// 	ofstream file;
+// 	file.open("log.txt", ios::app);
+// 	if (file.is_open() == false) {
+// 		throw runtime_error(string("log.txt: ") + strerror(errno));
+// 	}
+// 	file << "<>+++<>\n" + string(dt) + string(str) + "\n<>---<>\n";
+// 	file.close();
+// }
 
 void Pipe(int *fd) {
 	int res = pipe(fd);
