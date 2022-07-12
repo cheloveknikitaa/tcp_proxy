@@ -11,9 +11,9 @@ private:
 	int _fromUser[2];
 	ssize_t _byteFrom = 0;
 	ssize_t _byteTo = 0;
+	Server &_server;
 public:
-	Client(int fd);
-	Client(int fd, string ip, int port);
+	Client(int fd, Server &server);
 	~Client();
 
 	void recv_send(fd_set &rfds);
