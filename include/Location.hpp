@@ -2,22 +2,20 @@
 
 #include "Utils.hpp"
 
-class Location // struct??
-{
-private:
+using namespace std;
+
+#define GET 1<<0
+#define POST 1<<1
+#define DELETE 1<<2
+#define CGI 1<<3
+
+typedef struct Location {
+	string _location;
 	string _root;
-	string _cgi;
-	set<string> _methods;
-	string _index = "index.html";
-public:
-	Location(/* args */);
-	~Location();
-};
+	char _flags;
+	string _index;
+	Location(string location, string root, string index = "index.html", char flags = GET | POST) : _location(location), _root(root), _index(index) {
+		_flags = flags;
+	}
+}				Location_t;
 
-Location::Location(/* args */)
-{
-}
-
-Location::~Location()
-{
-}

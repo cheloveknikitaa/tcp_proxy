@@ -2,15 +2,13 @@
 
 #include <set>
 #include <map>
-#include "Location.hpp"
-#include "Server.hpp"
+#include <string>
+#include <vector>
 
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <string.h>
 #include <errno.h>
 #include <stdexcept>
-#include <string>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -18,8 +16,6 @@
 #include <exception>
 #include <stdio.h>
 #include <fcntl.h>
-#include "Client.hpp"
-#include <vector>
 #include <ctime>
 #include <fstream>
 #include <signal.h>

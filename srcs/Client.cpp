@@ -1,8 +1,10 @@
 #include "Client.hpp"
 
-Client::Client(int fd, Server &server) : _server(server), _fd(fd) {
+Client::Client(int fd, Server &server) : _fd(fd), _server(server) {
 	Pipe(_toUser);
 	Pipe(_fromUser);
+	this->_byteTo = 0;
+	this->_byteFrom = 0;
 }
 
 Client::~Client() {
@@ -10,6 +12,7 @@ Client::~Client() {
 		cout << "SEND TO\n";
 		Send(_fd, _byteTo, _toUser[0]);
 	}
+	(void)_server;
 	close(_fd);
 	close(_toUser[0]);
 	close(_toUser[1]);

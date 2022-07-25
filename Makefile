@@ -1,6 +1,6 @@
 TARGET		:= proxy_server
-CXX			:= clang++
-CXXFLAGS	:= -pedantic-errors -Wall -Wextra -Werror -pedantic -fdiagnostics-color=always -std=c++11
+CXX			:= c++
+CXXFLAGS	:= -pedantic-errors -Wall -Wextra -Werror -pedantic -fdiagnostics-color=always -std=c++98
 LDFLAGS		:= -L/usr/lib -lstdc++ -lm
 BUILD		:= ./build
 OBJ_DIR		:= $(BUILD)/objects
