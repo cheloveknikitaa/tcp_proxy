@@ -44,6 +44,7 @@ void Core::newConnection(Server &server){
 Core::Core(string path_to_config)
 {
 	FD_ZERO(&_FdsSet);
+	//parser config
 	if (path_to_config == "default") {
 		vector<Location_t> locations;
 		locations.push_back(Location("/","./html/"));
