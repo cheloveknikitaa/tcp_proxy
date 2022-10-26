@@ -1,81 +1,42 @@
 #include "../../include/parser/Parser.hpp"
 
 
-void	Parser::initContextServer(string command, char lastLine)
+void	Parser::validationContextDirective(vector<string>::iterator & ptr)
 {
-	if (!command.compare("server"))
-	{
-		if (lastLine == '{')
-		{
-			this->_context.first = true;
-			this->_context.second = "server";
-		}
-		else
-			this->_context.second = "server";
-	}
-	else	
-		throw "Invalid syntax file (error command context)";	
+	if (this->_context.second.compare("server") && this->_context.second.compare("location"))
+		throw "Error context directive";
+	if (!this->_context.first)
+		throw "Error open context directive";
+	if (!this->_context.second.compare("server") && (!(*ptr).compare("limit_except")))
+		throw "Error context for limit_except";
+	if (!this->_context.second.compare("location") && (!(*ptr).compare("listen")))
+		throw "Error context for listen";
 }
 
-
-
-void	Parser::initContextLocation(string command, char lastLine)
+void	Parser::validationCloseContext(vector<string>::iterator & ptr)
 {
-	if (!command.compare("location"))
+	
+	if (this->_context.second.empty())
+		throw "Error close context";
+	if (!this->_context.second.compare("location"))
 	{
-		if (lastLine == '{')
-		{
-			this->_context.first = true;
-			this->_context.second = "location";
-		}
-		else
-			this->_context.second = "location";
+		this->_context.second = "server";
+		this->_context.first = true;
 	}
-	else	
-	{
-		if (lastLine == '{')
-			throw "Invalid syntax file (Error context)";
-	}	
-}
-
-void	Parser::closeContext()
-{
-	//std::cout << "Context: " << this->_context.second << std::endl;
-
-	if (this->_context.first == false)
-		throw "Invalid syntax file (double close context)";
-	if (!this->_context.second.compare("server"))
+	else if (!this->_context.second.compare("server"))
 	{
 		this->_context.first = false;
 		this->_context.second = string();
 	}
-	else if (!this->_context.second.compare("location"))
-		this->_context.second = "server";
-	else
-		throw "Invalid syntax file (Error context)";
 }
 
-void	Parser::checkContext(string command, char lastLine)
+void	Parser::validationOpenContext(vector<string>::iterator & ptr)
 {
-	//std::cout << "Context: " << this->_context.second << std::endl;
-	if (command.size() == 1 && (lastLine == '{' || lastLine == '}'))
-	{
-		if (this->_context.second.empty())
-			throw "Invalid syntax file (Error context)";
-		if (lastLine == '}')
-			closeContext();
-		else
-			throw "Invalid syntax file (Error context)";
-		return ;
-	}
+	size_t index = this->conf.size() - 1;
 	if (this->_context.second.empty())
-		initContextServer(command, lastLine);
-	else if (!this->_context.second.compare("server"))
-		initContextLocation(command, lastLine);
-	else {
-		if (lastLine == '{')
-			throw "Invalid syntax file (Error context)";
-		else if (lastLine == '}')
-			closeContext();
-	}
+		throw "Error open context";
+	if (!this->_context.second.compare("server") && this->_context.first == true)
+		throw "Error open context (double open)";
+	if (!this->_context.second.compare("location") && this->_context.first == true)
+		throw "Error open context (double open)";
 }

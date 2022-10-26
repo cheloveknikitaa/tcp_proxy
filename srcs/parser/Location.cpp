@@ -2,25 +2,35 @@
 // #include "../../include/parser/Location.hpp"
 #include "../../include/parser/Parser.hpp"
 
-void	Location::initDirective(string &line, string &command)
+void	Location::initDirectiveLimitExcept(vector<string>::iterator & ptr)
 {
+	vector <string> methods;
 
-	line.erase(line.find(';'));
+	while ((*ptr).compare(";"))
+	{
+		methods.push_back(*ptr);
+		ptr++;
+	}
+	this->_method = methods;
+}
 
-	if(!command.compare("root"))
-		processingCommandRoot(line);
-	else if (!command.compare("client_max_body_size"))
-		processingCommandMaxBodySize(line);
-	else if (!command.compare("limit_except"))
-		processingLimitExcept(line);
-	else if (!command.compare("error_page"))
-		processingErrorPage(line);
-	else if (!command.compare("cgi_extension"))
-		processingCgiExtension(line);
-	else if (!command.compare("cgi_path"))
-		processingCgiPath(line);
-	else if (!command.compare("return"))
-		processingReturn(line);
+void	Location::initDirective(vector<string>::iterator & ptr)
+{
+	//std::cout << *ptr << std::endl;
+	if (!(*ptr).compare("limit_except"))
+		initDirectiveLimitExcept(++ptr);
+	else if(!(*ptr).compare("root"))
+		initDirectiveRoot(++ptr);
+	else if (!(*ptr).compare("client_max_body_size"))
+		initDirectiveMaxBodySize(++ptr);
+	else if (!(*ptr).compare("error_page"))
+		initDirectiveErrorPage(++ptr);
+	else if (!(*ptr).compare("cgi_extension"))
+		initDirectiveCgiExtension(++ptr);
+	else if (!(*ptr).compare("cgi_path"))
+		initDirectiveCgiPath(++ptr);
+	else if (!(*ptr).compare("return"))
+		initDirectiveReturn(++ptr);
 	else
 		throw "Error name command";
 

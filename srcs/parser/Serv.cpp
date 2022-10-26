@@ -2,202 +2,135 @@
 #include "../../include/parser/Parser.hpp"
 
 
-void	Serv::processingCommandListen(string &line)
+void	Serv::initDirectiveListen(vector<string>::iterator & ptr)
 {
-	string args = line;
-	vector <string> argsTmp;
 	ListenPort listen;
 
-	int countArgs = checkCountArgs(args);
-	if (countArgs > 2)
-		throw "Error count args in command listen";
-
-	for (size_t i = 0; i < countArgs; i++)
+	//std::cout << "Listen: " << *ptr << std::endl;
+	parseListenPath(*ptr, listen);
+	ptr++;
+	if ((ptr).operator*().compare(";"))
 	{
-		argsTmp.push_back(popBackArg(args));
-		eraseCommand(args);
-	}
-	if (countArgs == 2)
-	{
-		if (argsTmp.at(0).compare("default_server"))
-			throw "Error sign default_server";
 		listen._isDefault = true;
-		parseListenPath(argsTmp.at(1), listen);
+		ptr++;
 	}
-	else
-		parseListenPath(argsTmp.at(0), listen);
-
 	this->_listenPort = listen;
 
-
 }
 
-void	Serv::processingCommandRoot(string &line)
+void	Serv::initDirectiveIndex(vector<string>::iterator & ptr)
 {
-	string args = line;
-	string argTmp;
 
-	int countArgs = checkCountArgs(args);
-	if (countArgs > 1)
-		throw "Error count args in command root";
+	vector <string> index;
+
+	while ((*ptr).compare(";"))
+	{
+		index.push_back(*ptr);
+		ptr++;
+	}
 	
-
-	argTmp = popBackArg(args);
-	this->_root = argTmp;
-
+	this->_index = index;
 
 }
 
-void	Serv::processingCommandMaxBodySize(string &line)
+void	Serv::initDirectiveRoot(vector<string>::iterator & ptr)
 {
-	string args = line;
-	string argTmp;
+	this->_root = *ptr;
+	ptr++;
+}
+
+void	Serv::initDirectiveMaxBodySize(vector<string>::iterator & ptr)
+{
 	size_t pos;
-
-
-	int countArgs = checkCountArgs(args);
-	if (countArgs > 1)
-		throw "Error count args in command MaxBodySize";
-
-	argTmp = popBackArg(args);
-	
-	this->_clientMaxBodySize = stoul(argTmp, &pos);
-	if (pos < argTmp.size())
+	//std::cout << *ptr << std::endl;
+	this->_clientMaxBodySize = stoul(*ptr, &pos);
+	if (pos < (*ptr).size())
 		throw "Invalid syntax file: error format arg";
-
+	ptr++;
 }
 
-void	Serv::processingLimitExcept(string &line)
+
+void	Serv::initDirectiveErrorPage(vector<string>::iterator & ptr)
 {
-
-	string args = line;
-	vector <string> methods;
-	string argTmp;
-
-	int countArgs = checkCountArgs(args);
-	if (countArgs > 3)
-		throw "Error count args in command server name";
-	
-	for (size_t i = 0; i < countArgs; i++)
-	{
-		argTmp = (popBackArg(args));
-		if (!argTmp.compare("GET") || !argTmp.compare("POST") || !argTmp.compare("DELETE"))
-			methods.push_back(argTmp);
-		else
-			throw "Error name arg in command limit except";
-		eraseCommand(args);
-	}
-	this->_method = methods;
-	
-}
-
-void	Serv::processingErrorPage(string &line)
-{
-	string args = line;
-	vector <string> argsTmp;
+	//std::cout << *ptr << std::endl;
 	size_t pos;
-	
-	int countArgs = checkCountArgs(args);
-	if (countArgs > 2)
-		throw "Error count args in command Error Page";
-
-	for (size_t i = 0; i < countArgs; i++)
-	{
-		argsTmp.push_back(popBackArg(args));
-		eraseCommand(args);
-	}
-
-	this->_errorPage.code = stoul(argsTmp.at(1), &pos);
-	this->_errorPage.path = argsTmp.at(0);
-
-	if (pos < argsTmp.at(1).size())
+	this->_errorPage.code = stoul(*ptr, &pos);
+	if (pos < (*ptr).size())
 		throw "Invalid syntax file: error format arg";
+	ptr++;
+	this->_errorPage.path = *ptr;
+	ptr++;
 }
 
-void	Serv::processingServerName(string &line)
+void	Serv::initDirectiveServerName(vector<string>::iterator & ptr)
 {
-	string args = line;
-	vector <string> argsTmp;
+	vector <string> serverNames;
 
-	int countArgs = checkCountArgs(args);
-
-	for (size_t i = 0; i < countArgs; i++)
+	while ((*ptr).compare(";"))
 	{
-		argsTmp.push_back(popBackArg(args));
-		eraseCommand(args);
+		serverNames.push_back(*ptr);
+		ptr++;
 	}
 	
-	this->_serverName = argsTmp;
+	this->_serverName = serverNames;
 }
 
-void	Serv::processingCgiExtension(string &line)
+void	Serv::initDirectiveCgiExtension(vector<string>::iterator & ptr)
 {
 
 }
 
-void	Serv::processingCgiPath(string &line)
+void	Serv::initDirectiveCgiPath(vector<string>::iterator & ptr)
 {
 
 }
 
-void	Serv::processingReturn(string &line)
+void	Serv::initDirectiveReturn(vector<string>::iterator & ptr)
 {
-	string args = line;
-	vector <string> argsTmp;
+	//std::cout << *ptr << std::endl;
 	size_t pos;
-	
-	int countArgs = checkCountArgs(args);
-	if (countArgs > 2)
-		throw "Error count args in command Return";
-
-	for (size_t i = 0; i < countArgs; i++)
-	{
-		argsTmp.push_back(popBackArg(args));
-		eraseCommand(args);
-	}
-
-	this->_return.code = stoul(argsTmp.at(1), &pos);
-	this->_return.path = argsTmp.at(0);
-
-	if (pos < argsTmp.at(1).size())
+	this->_return.code = stoul(*ptr, &pos);
+	if (pos < (*ptr).size())
 		throw "Invalid syntax file: error format arg";
+	ptr++;
+	this->_return.path = *ptr;
+	ptr++;
 }
 
-void	Serv::initLocation(string &line)
+void	Serv::initLocation(vector<string>::iterator & ptr)
 {
-	string path = line;
-	this->_locations.push_back(Location());
-	unsigned int countLocation = this->_locations.size() - 1;
+	ptr++;
+	this->_locations.push_back(Location(*(ptr)));
+	// unsigned int countLocation = this->_locations.size() - 1;
 
-	path.erase(path.find('{'));
-	if (checkCountArgs(path) > 1)
-		throw "Error count path";
-	this->_locations.at(countLocation)._path = path;
+	// if (checkCountArgs(path) > 1)
+	// 	throw "Error count path";
+	// this->_locations.at(countLocation)._path = path;
 
 };
 
 
-void	Serv::initDirective(string &line, string &command)
+void	Serv::initDirective(vector<string>::iterator & ptr)
 {
-
-	line.erase(line.find(';'));
-
-	if (!command.compare("listen"))
-		processingCommandListen(line);
-	else if(!command.compare("root"))
-		processingCommandRoot(line);
-	else if (!command.compare("client_max_body_size"))
-		processingCommandMaxBodySize(line);
-	else if (!command.compare("error_page"))
-		processingErrorPage(line);
-	else if (!command.compare("server_name"))
-		processingServerName(line);
-	else if (!command.compare("cgi_extension"))
-		processingCgiExtension(line);
-	else if (!command.compare("cgi_path"))
-		processingCgiPath(line);
-	else if (!command.compare("return"))
-		processingReturn(line);
+	//std::cout << *ptr << std::endl;
+	if (!(*ptr).compare("listen"))
+		initDirectiveListen(++ptr);
+	else if(!(*ptr).compare("root"))
+		initDirectiveRoot(++ptr);
+	else if (!(*ptr).compare("client_max_body_size"))
+		initDirectiveMaxBodySize(++ptr);
+	else if (!(*ptr).compare("error_page"))
+		initDirectiveErrorPage(++ptr);
+	else if (!(*ptr).compare("server_name"))
+		initDirectiveServerName(++ptr);
+	else if (!(*ptr).compare("cgi_extension"))
+		initDirectiveCgiExtension(++ptr);
+	else if (!(*ptr).compare("cgi_path"))
+		initDirectiveCgiPath(++ptr);
+	else if (!(*ptr).compare("return"))
+		initDirectiveReturn(++ptr);
+	else if (!(*ptr).compare("index"))
+		initDirectiveIndex(++ptr);
 	else
 		throw "Error name command";
 

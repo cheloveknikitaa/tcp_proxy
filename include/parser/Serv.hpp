@@ -8,12 +8,12 @@ struct Cgi {
 };
 
 struct ErrorPage {
-	unsigned int code;
+	unsigned long code;
 	string path;
 };
 
 struct Return {
-	unsigned int code;
+	unsigned long code;
 	string path;
 };
 
@@ -30,6 +30,7 @@ class Serv
 	Return	_return;
 	unsigned long _clientMaxBodySize;
 	vector <string>	_method;
+	vector <string>	_index;
 	string _root;
 	Serv(void) {
 		//какое то значение по умолчанию
@@ -40,22 +41,23 @@ class Serv
 		_method.push_back("DELETE");
 		_return.code = 0;
 		_errorPage.code = 0;
+		//_index.push_back("index.html");
 		//_listenPort();
 		
 	};
 	public:
 	//переобределить в Location - сделать недоступной
-	void	initLocation(string &line);
-	void	initDirective(string &line, string &command);
-	void	processingCommandListen(string &line);
-	void	processingReturn(string &line);
-	void	processingCgiPath(string &line);
-	void	processingCgiExtension(string &line);
-	void	processingServerName(string &line);
-	void	processingErrorPage(string &line);
-	void	processingLimitExcept(string &line);
-	void	processingCommandMaxBodySize(string &line);
-	void	processingCommandRoot(string &line);
+	void	initLocation(vector<string>::iterator & ptr);
+	void	initDirective(vector<string>::iterator & ptr);
+	void	initDirectiveListen(vector<string>::iterator & ptr);
+	void	initDirectiveReturn(vector<string>::iterator & ptr);
+	void	initDirectiveCgiPath(vector<string>::iterator & ptr);
+	void	initDirectiveCgiExtension(vector<string>::iterator & ptr);
+	void	initDirectiveServerName(vector<string>::iterator & ptr);
+	void	initDirectiveErrorPage(vector<string>::iterator & ptr);
+	void	initDirectiveMaxBodySize(vector<string>::iterator & ptr);
+	void	initDirectiveRoot(vector<string>::iterator & ptr);
+	void	initDirectiveIndex(vector<string>::iterator & ptr);
 
 
 };

@@ -9,8 +9,11 @@ class Location : public Serv {
 	string	_path;
 	// Cgi		_cgi;
 
-	Location () : Serv() {};
-	void	initDirective(string &line, string &command);
+	Location (string path = string()) : Serv(), _path(path) {};
+	void	initDirective(vector<string>::iterator & ptr);
+	void	initDirectiveLimitExcept(vector<string>::iterator & ptr);
 	~Location () {};
+
+	// в location не будет server name и listen - обработать, чтобы были недоступны эти методы
 
 };
