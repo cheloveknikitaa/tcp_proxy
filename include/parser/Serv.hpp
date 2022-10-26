@@ -3,6 +3,12 @@
 #include "ListenPort.hpp"
 //#include "Location.hpp"
 
+typedef enum{
+	GET,
+	POST,
+	DELETE
+} eHTTPMethod;
+
 struct Cgi {
 
 };
@@ -29,16 +35,16 @@ class Serv
 	ErrorPage _errorPage;
 	Return	_return;
 	unsigned long _clientMaxBodySize;
-	vector <string>	_method;
+	vector <eHTTPMethod>	_method;
 	vector <string>	_index;
 	string _root;
 	Serv(void) {
 		//какое то значение по умолчанию
 		_clientMaxBodySize = 0;
 		//если по умолчанию все методы
-		_method.push_back("GET");
-		_method.push_back("POST");
-		_method.push_back("DELETE");
+		_method.push_back(GET);
+		_method.push_back(POST);
+		_method.push_back(DELETE);
 		_return.code = 0;
 		_errorPage.code = 0;
 		//_index.push_back("index.html");

@@ -4,11 +4,16 @@
 
 void	Location::initDirectiveLimitExcept(vector<string>::iterator & ptr)
 {
-	vector <string> methods;
+	vector <eHTTPMethod> methods;
 
 	while ((*ptr).compare(";"))
 	{
-		methods.push_back(*ptr);
+		if (!(*ptr).compare("GET"))
+			methods.push_back(GET);
+		else if (!(*ptr).compare("POST"))
+			methods.push_back(POST);
+		else if (!(*ptr).compare("DELETE"))
+			methods.push_back(DELETE);
 		ptr++;
 	}
 	this->_method = methods;
