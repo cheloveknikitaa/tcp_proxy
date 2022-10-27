@@ -53,17 +53,18 @@ class Serv
 	};
 	public:
 	//переобределить в Location - сделать недоступной
-	void	initLocation(vector<string>::iterator & ptr);
-	void	initDirective(vector<string>::iterator & ptr);
-	void	initDirectiveListen(vector<string>::iterator & ptr);
-	void	initDirectiveReturn(vector<string>::iterator & ptr);
-	void	initDirectiveCgiPath(vector<string>::iterator & ptr);
-	void	initDirectiveCgiExtension(vector<string>::iterator & ptr);
-	void	initDirectiveServerName(vector<string>::iterator & ptr);
-	void	initDirectiveErrorPage(vector<string>::iterator & ptr);
-	void	initDirectiveMaxBodySize(vector<string>::iterator & ptr);
-	void	initDirectiveRoot(vector<string>::iterator & ptr);
-	void	initDirectiveIndex(vector<string>::iterator & ptr);
+	virtual void	initDirective(vector<string>::iterator & ptr);
+	void			initLocation(vector<string>::iterator & ptr);
+	protected:
+	void			initDirectiveListen(vector<string>::iterator & ptr);
+	void			initDirectiveReturn(vector<string>::iterator & ptr);
+	void			initDirectiveCgiPath(vector<string>::iterator & ptr);
+	void			initDirectiveCgiExtension(vector<string>::iterator & ptr);
+	void			initDirectiveServerName(vector<string>::iterator & ptr);
+	void			initDirectiveErrorPage(vector<string>::iterator & ptr);
+	void			initDirectiveMaxBodySize(vector<string>::iterator & ptr);
+	void			initDirectiveRoot(vector<string>::iterator & ptr);
+	void			initDirectiveIndex(vector<string>::iterator & ptr);
 
 
 };
