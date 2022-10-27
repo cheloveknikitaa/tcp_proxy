@@ -492,9 +492,10 @@ void	Parser::parse(const string &filename)
 	}
 	validationConfig(line);
 	initData();
+    std::for_each(this->conf.begin(), this->conf.end(), [](const auto &e) {std::cout << e << "\n";});
 	// //Заполнение объектов отсутствующими значениями
-	fillServers();
+//	fillServers();
 	// //Добавить метод для проверки обязательных параметров
-	showData();
+//	showData();
 
 }

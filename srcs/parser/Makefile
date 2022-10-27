@@ -1,6 +1,6 @@
 NAME = parser
 CPP_FILE = *.cpp
-CFLAGS =  -std=c++98
+CFLAGS =  -std=c++17
 INC_FILE = ../../include/parser/*.hpp
 
 all: $(NAME)
