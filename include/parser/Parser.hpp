@@ -17,7 +17,7 @@ private:
 	void	fillServers();
 	void	showData();
 	void	checkEndDirective(vector<string>::iterator & ptr);
-	void	validationConfig(string &line);
+	void	validationConfig();
 	void	split(string & line);
 	void	validationCloseContext(vector<string>::iterator & ptr);
 	void	validationOpenContext(vector<string>::iterator & ptr);
@@ -35,6 +35,7 @@ private:
 	void	validationDirectiveMaxBodySize(vector<string>::iterator & ptr);
 	void	validationDirectiveRoot(vector<string>::iterator & ptr);
 	void	validationDirectiveIndex(vector<string>::iterator & ptr);
+	void	validationDirectiveAutoindex(vector<string>::iterator &ptr);
 
 public:
 	Parser(void) : _context(false, string()) {};

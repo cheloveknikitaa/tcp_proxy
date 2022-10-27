@@ -307,13 +307,8 @@ void Parser::validationDirectiveReturn(vector<string>::iterator &ptr) {
 }
 
 void Parser::validationDirectiveListen(vector<string>::iterator &ptr) {
-    size_t i = 0;
-    ListenPort listen;
-    string path = *ptr;
 
-    ptr++;
-    parseListenPath(path, listen);
-    ptr++;
+    ptr = ptr + 2;
     if ((*ptr).compare(";") && (*ptr).compare("default_server"))
         throw "Error sign default_server";
     if (!(*ptr).compare("default_server"))
@@ -321,6 +316,24 @@ void Parser::validationDirectiveListen(vector<string>::iterator &ptr) {
     checkEndDirective(ptr);
 
 }
+
+void Parser::validationDirectiveAutoindex(vector<string>::iterator &ptr) {
+    
+    ptr++;
+    if ((*ptr).compare("on") && (*ptr).compare("off"))
+        throw "Error name arg in command autoindex";
+	ptr++;
+    checkEndDirective(ptr);
+
+}
+
+void Parser::validationDirectiveCgiPath(vector<string>::iterator &ptr) {
+    
+    ptr = ptr + 2;
+    checkEndDirective(ptr);
+
+}
+
 
 void Parser::split(string &line) {
     char delimiter;
@@ -339,7 +352,7 @@ void Parser::split(string &line) {
             pos = posTab;
         delimiter = line.at(pos);
         if (pos != 0 && !line.empty())
-            this->conf.push_back(line.substr(0, pos));
+			this->conf.push_back(line.substr(0, pos));
         while (pos < line.size() && line.at(pos) == delimiter) {
             pos++;
         }
@@ -390,6 +403,10 @@ void Parser::validationDirective(vector<string>::iterator &ptr) {
         validationDirectiveReturn(ptr);
     else if (!(*ptr).compare("limit_except"))
         validationDirectiveLimitExcept(ptr);
+	else if (!(*ptr).compare("autoindex"))
+        validationDirectiveAutoindex(ptr);
+	else if (!(*ptr).compare("cgi_path"))
+        validationDirectiveCgiPath(ptr);
     else
         throw "Error name directive";
 
@@ -407,7 +424,7 @@ void Parser::validationLocation(vector<string>::iterator &ptr) {
 }
 
 
-void Parser::validationConfig(string &line) {
+void Parser::validationConfig() {
     int count = this->conf.size();
     //split(line);
     vector<string>::iterator ptr;
@@ -440,13 +457,13 @@ void Parser::parse(const string &filename) {
 
     while (!fin.eof()) {
         std::getline(fin, line);
-        if (line.empty())
-            continue;
         eraseComment(line);
+		if (line.empty())
+            continue;
         split(line);
     }
-    validationConfig(line);
-    initData();
+	validationConfig();
+    //initData();
     std::for_each(this->conf.begin(), this->conf.end(), [](const auto &e) { std::cout << e << "\n"; });
     // //Заполнение объектов отсутствующими значениями
 //	fillServers();
