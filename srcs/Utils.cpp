@@ -128,3 +128,20 @@ void Pipe(int *fd) {
         throw runtime_error(string("pipe : ") + strerror(errno));
     }
 }
+
+vector<string>	split(string & line, string delimiter)
+{
+    size_t pos;
+    vector<string> tmp;
+
+     while ((pos = line.find(delimiter)) != std::string::npos) 
+     {
+        if (pos != 0 && !line.empty())
+			tmp.push_back(line.substr(0, pos));
+        line.erase(0, pos + delimiter.size());
+    }
+    //std::cout << line << std::endl;
+    if (!line.empty())
+       tmp.push_back(line);
+    return tmp;
+}

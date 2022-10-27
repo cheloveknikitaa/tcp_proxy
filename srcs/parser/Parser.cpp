@@ -335,7 +335,7 @@ void Parser::validationDirectiveCgiPath(vector<string>::iterator &ptr) {
 }
 
 
-void Parser::split(string &line) {
+void Parser::splitConf(string &line) {
     char delimiter;
     size_t pos = 0;
     int posSpace = 0;
@@ -460,7 +460,7 @@ void Parser::parse(const string &filename) {
         eraseComment(line);
 		if (line.empty())
             continue;
-        split(line);
+        splitConf(line);
     }
 	validationConfig();
     //initData();

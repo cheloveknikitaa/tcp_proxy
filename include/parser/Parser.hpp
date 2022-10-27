@@ -18,7 +18,7 @@ private:
 	void	showData();
 	void	checkEndDirective(vector<string>::iterator & ptr);
 	void	validationConfig();
-	void	split(string & line);
+	void	splitConf(string & line);
 	void	validationCloseContext(vector<string>::iterator & ptr);
 	void	validationOpenContext(vector<string>::iterator & ptr);
 	void	validationServer(vector<string>::iterator & ptr);

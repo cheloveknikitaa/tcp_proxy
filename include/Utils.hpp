@@ -47,3 +47,5 @@ void sigHendler(int signum);
 void createLog(char *str);
 
 void Pipe(int *fd);
+
+vector<string>	split(string & line, string delimiter);
