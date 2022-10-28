@@ -314,14 +314,22 @@ void Parser::validationDirectiveListen(vector<string>::iterator &ptr) {
 	ListenPort listen;
 	string path = *(ptr + 1);
 	parseListenPath(path, listen);
-    *(ptr) = listen._address;
+	*ptr = "ip";
 	ptr++;
-	*(ptr) = listen._port;
+	this->conf.insert(ptr, listen._address);
 	ptr++;
+	this->conf.insert(ptr, ";");
+	ptr++;
+	*(ptr) = "port";
+	ptr++;
+	this->conf.insert(ptr, listen._port);
+	ptr++;
+	this->conf.insert(ptr, ";");
     // if ((*ptr).compare(";") && (*ptr).compare("default_server"))
     //     throw "Error sign default_server";
     // if (!(*ptr).compare("default_server"))
     //     ptr++;
+	ptr++;
     checkEndDirective(ptr);
 
 }
