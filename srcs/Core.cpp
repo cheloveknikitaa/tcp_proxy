@@ -43,14 +43,12 @@ void Core::newConnection(Server &server) {
 
 Core::Core(string path_to_config) {
     FD_ZERO(&_FdsSet);
-    //parser config
-    if (path_to_config == "default") {
-        vector<Location_t> locations;
-        locations.push_back(Location("/", "./html/"));
-        Server serv(locations);
-        FD_SET(serv.get_socket(), &_FdsSet);
-        pair<int, Server> tmp = std::make_pair(80, serv);
-        this->_servers.insert(tmp);
+    Parser parser;
+    parser.parse(path_to_config);
+    for(std::vector<std::string>::iterator configIt = parser.getConf().begin();
+        configIt != parser.getConf().end(); ++configIt) {
+        Server *server = new Server(configIt);
+        _servers[server->get_socket()] = server;
     }
     // pars conf
     // _MaxFd = _socket;

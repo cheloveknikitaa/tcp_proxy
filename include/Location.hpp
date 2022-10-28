@@ -13,8 +13,9 @@ typedef struct Location {
 	string _location;
 	string _root;
 	char _flags;
-	string _index;
-	Location(string location, string root, string index = "index.html", char flags = GET | POST) : _location(location), _root(root), _index(index) {
+	vector<string> _index;
+    ssize_t _client_max_body_size;
+	Location(string location, string root, vector<string> index, char flags = GET | POST) : _location(location), _root(root), _index(index) {
 		_flags = flags;
 	}
 }				Location_t;
