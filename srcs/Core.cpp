@@ -1,6 +1,5 @@
 #include "Core.hpp"
 
-
 void Core::run() {
     std::cout << "Waiting for a connection..." << '\n';
     fd_set rfds;
@@ -41,7 +40,7 @@ void Core::newConnection(Server &server) {
     }
 }
 
-Core::Core(string path_to_config) {
+Core::Core(const string &path_to_config) {
     FD_ZERO(&_FdsSet);
     Parser parser;
     parser.parse(path_to_config);

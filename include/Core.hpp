@@ -2,9 +2,11 @@
 
 #include "Utils.hpp"
 #include "Client.hpp"
-#include "parser/Parser.hpp"
+#include "Parser.hpp"
 
 using namespace std;
+
+class Parser;
 class Core
 {
 private:
@@ -16,6 +18,6 @@ public:
 	void run();
 	void newConnection(Server &server);
 
-	Core(string path_to_config = "default");
+	Core(const string &path_to_config = "default");
 	~Core();
 };

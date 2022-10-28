@@ -11,7 +11,6 @@ private:
     int _socket;
     string _index;
     map<string, Location> _locations;
-    string _root;
     string _server_name;
     map<string, string> _error_page;
     string _ip;
