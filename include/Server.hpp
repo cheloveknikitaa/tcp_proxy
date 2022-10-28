@@ -3,13 +3,14 @@
 #include "Utils.hpp"
 #include "Location.hpp"
 
-using namespace std;
-
 class Server {
 private:
+    bool _autoIndex;
+    string _root;
+    ssize_t _clientBodySize;
     int _socket;
     string _index;
-    vector<Location_t> _locations;
+    map<string, Location> _locations;
     string _root;
     string _server_name;
     map<string, string> _error_page;
@@ -27,6 +28,11 @@ private:
     void setErrorPage(std::vector<string>::iterator &it);
 
     void setIndex(std::vector<string>::iterator &it);
+
+    void setAutoIndex(std::vector<string>::iterator &it);
+    void setRoot(std::vector<string>::iterator &it);
+    void setClientBodySize(std::vector<string>::iterator &it);
+
 public:
     void add_locations(Location &);
 
@@ -35,8 +41,6 @@ public:
     int get_socket();
 
     Server(vector<std::string>::iterator &);
-
-    Server(vector<Location_t> locations, string root = "", int port = 80, string server_name = "");
 
     ~Server();
 };

@@ -334,15 +334,15 @@ void Parser::validationDirectiveListen(vector<string>::iterator &ptr) {
 
 }
 
-void Parser::validationDirectiveAutoindex(vector<string>::iterator &ptr) {
+// void Parser::validationDirectiveAutoindex(vector<string>::iterator &ptr) {
     
-    ptr++;
-    if ((*ptr).compare("on") && (*ptr).compare("off"))
-        throw "Error name arg in command autoindex";
-	ptr++;
-    checkEndDirective(ptr);
+//     ptr++;
+//     if ((*ptr).compare("on") && (*ptr).compare("off"))
+//         throw "Error name arg in command autoindex";
+// 	ptr++;
+//     checkEndDirective(ptr);
 
-}
+// }
 
 void Parser::validationDirectiveCgiPath(vector<string>::iterator &ptr) {
     

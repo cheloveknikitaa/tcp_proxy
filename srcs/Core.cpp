@@ -7,13 +7,13 @@ void Core::run() {
     while (1) {
         rfds = _FdsSet;
         select(_MaxFd + 1, &rfds, NULL, NULL, NULL);
-        for (map<int, Server>::iterator it = _servers.begin(); it != _servers.end(); ++it) {
-            if (FD_ISSET((*it).second.get_socket(), &rfds)) {
-                newConnection((*it).second);
+        for (map<int, Server*>::iterator it = _servers.begin(); it != _servers.end(); ++it) {
+            if (FD_ISSET((*it).second->get_socket(), &rfds)) {
+                newConnection(*(*it).second);
             }
         }
         for (std::vector<Client *>::iterator it = _Clients.begin();
-             it != _Clients.end(); ++it) {
+            it != _Clients.end(); ++it) {
             try {
                 (*it)->recv_send(rfds);
             } catch (int fd) {
@@ -57,7 +57,7 @@ Core::Core(string path_to_config) {
 
 Core::~Core() {
     for (std::vector<Client *>::iterator it = _Clients.begin();
-         it != _Clients.end(); ++it) {
+        it != _Clients.end(); ++it) {
         delete (*it);
         it = _Clients.erase(it);
         if (it == _Clients.end())
