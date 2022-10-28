@@ -266,28 +266,31 @@ void Parser::validationDirectiveLimitExcept(vector<string>::iterator &ptr) {
 }
 
 void Parser::validationDirectiveServerName(vector<string>::iterator &ptr) {
-    size_t i = 0;
-    while ((*ptr).compare(";") && ptr != conf.end()) {
-        // if (!(*ptr).compare(";"))
-        // 	break ;
-        ptr++;
-        i++;
-    }
-    if (i == 0)
-        throw "Unvalid count arguments";
+    // size_t i = 0;
+    // while ((*ptr).compare(";") && ptr != conf.end()) {
+    //     // if (!(*ptr).compare(";"))
+    //     // 	break ;
+    //     ptr++;
+    //     i++;
+    // }
+    // if (i == 0)
+    //     throw "Unvalid count arguments";
+
+	ptr = ptr + 2;
     checkEndDirective(ptr);
 }
 
 void Parser::validationDirectiveIndex(vector<string>::iterator &ptr) {
-    size_t i = 0;
-    while ((*ptr).compare(";") && ptr != conf.end()) {
-        // if (!(*ptr).compare(";"))
-        // 	break ;
-        ptr++;
-        i++;
-    }
-    if (i == 0)
-        throw "Unvalid count arguments";
+    // size_t i = 0;
+    // while ((*ptr).compare(";") && ptr != conf.end()) {
+    //     // if (!(*ptr).compare(";"))
+    //     // 	break ;
+    //     ptr++;
+    //     i++;
+    // }
+    // if (i == 0)
+    //     throw "Unvalid count arguments";
+	ptr = ptr + 2;
     checkEndDirective(ptr);
 }
 
@@ -308,11 +311,17 @@ void Parser::validationDirectiveReturn(vector<string>::iterator &ptr) {
 
 void Parser::validationDirectiveListen(vector<string>::iterator &ptr) {
 
-    ptr = ptr + 2;
-    if ((*ptr).compare(";") && (*ptr).compare("default_server"))
-        throw "Error sign default_server";
-    if (!(*ptr).compare("default_server"))
-        ptr++;
+	ListenPort listen;
+	string path = *(ptr + 1);
+	parseListenPath(path, listen);
+    *(ptr) = listen._address;
+	ptr++;
+	*(ptr) = listen._port;
+	ptr++;
+    // if ((*ptr).compare(";") && (*ptr).compare("default_server"))
+    //     throw "Error sign default_server";
+    // if (!(*ptr).compare("default_server"))
+    //     ptr++;
     checkEndDirective(ptr);
 
 }

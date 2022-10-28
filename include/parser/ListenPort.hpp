@@ -6,9 +6,9 @@ class ListenPort {
 	//может в pair отдавать?
 	public:
 	string _address;
-	unsigned long _port;
+	string _port;
 	bool	_isDefault;
-	ListenPort (string address = "0.0.0.0", unsigned long port = 80, bool isDefault = false) : 
+	ListenPort (string address = "0.0.0.0", string port = "80", bool isDefault = false) : 
 		_address(address), _port(port), _isDefault(isDefault) {};
 
 	ListenPort(const ListenPort & other) : _address(other._address), _port(other._port), _isDefault(other._isDefault) {};

@@ -58,9 +58,9 @@ void parseListenPath(string &path, ListenPort &listen) {
         if (it != path.end()) {
             checkAddress(path);
             listen._address = path;
-            listen._port = 80;
+            listen._port = "80";
         } else {
-            listen._port = stoul(path, &pos);
+            listen._port = path;
             //std::cout << listen._port << std::endl;
             if (pos < path.size())
                 throw "Invalid value port";
@@ -74,7 +74,7 @@ void parseListenPath(string &path, ListenPort &listen) {
             checkAddress(address);
             listen._address = address;
             path.erase(path.begin(), it.operator++());
-            listen._port = stoul(path, &pos);
+            listen._port = path;
             if (pos < path.size())
                 throw "Invalid value port";
         }
