@@ -15,7 +15,7 @@ private:
 	map <string, string > _headers;
 	string _body;
 public:
-	Request(/* args */);
+	Request(char *buf);
 	~Request();
 	void	parseRequest(string request);
 	string	getHeaderValue(string key);

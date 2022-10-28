@@ -311,18 +311,19 @@ void Parser::validationDirectiveReturn(vector<string>::iterator &ptr) {
 
 void Parser::validationDirectiveListen(vector<string>::iterator &ptr) {
 
-	ListenPort listen;
+	string ip;
+	string port;
 	string path = *(ptr + 1);
-	parseListenPath(path, listen);
+	parseListenPath(path, ip, port);
 	*ptr = "ip";
 	ptr++;
-	this->conf.insert(ptr, listen._address);
+	this->conf.insert(ptr, ip);
 	ptr++;
 	this->conf.insert(ptr, ";");
 	ptr++;
 	*(ptr) = "port";
 	ptr++;
-	this->conf.insert(ptr, listen._port);
+	this->conf.insert(ptr, port);
 	ptr++;
 	this->conf.insert(ptr, ";");
     // if ((*ptr).compare(";") && (*ptr).compare("default_server"))

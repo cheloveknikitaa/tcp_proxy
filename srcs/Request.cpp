@@ -1,7 +1,8 @@
 #include "include/Request.hpp"
 
-Request::Request(/* args */)
+Request::Request(char *buf)
 {
+	this->parseRequest(string(buf));
 }
 
 Request::~Request()

@@ -20,6 +20,7 @@
 #include <fstream>
 #include <signal.h>
 #include <algorithm>
+#include <Request.hpp>
 
 #define BUFFER_SIZE 512
 #define COM_QUERY 3

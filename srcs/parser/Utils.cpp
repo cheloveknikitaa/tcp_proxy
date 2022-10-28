@@ -28,7 +28,7 @@ void checkAddress(string &address) {
         throw "Invalid value address";
 }
 
-void parseListenPath(string &path, ListenPort &listen) {
+void parseListenPath(string &path, string &ip, string &port) {
     //validation ip - Inet_aton
     string::iterator it;
     string::iterator ite;
@@ -57,24 +57,24 @@ void parseListenPath(string &path, ListenPort &listen) {
         }
         if (it != path.end()) {
             checkAddress(path);
-            listen._address = path;
-            listen._port = "80";
+            ip = path;
+            port = "80";
         } else {
-            listen._port = path;
-            //std::cout << listen._port << std::endl;
+            port = path;
+            //std::cout << port << std::endl;
             if (pos < path.size())
                 throw "Invalid value port";
-            listen._address = "0.0.0.0";
+            ip = "0.0.0.0";
         }
     } else {
         if (*it == ':' && *(path.begin()) == '*')
-            listen._address = "0.0.0.0";
+            ip = "0.0.0.0";
         else {
             address.erase(ite, address.end());
             checkAddress(address);
-            listen._address = address;
+            ip = address;
             path.erase(path.begin(), it.operator++());
-            listen._port = path;
+            port = path;
             if (pos < path.size())
                 throw "Invalid value port";
         }

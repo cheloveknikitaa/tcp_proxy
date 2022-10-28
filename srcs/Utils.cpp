@@ -88,6 +88,8 @@ void Recv(int fd, ssize_t &bufread, int wfd) {
     } else if (nread == 0) {
         throw fd;
     }
+    //processing request
+    Request req(buf);
     write(wfd, buf, nread);
     bufread = nread;
 }
